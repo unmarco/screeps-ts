@@ -1,5 +1,5 @@
 {
-  "editor.renderWhitespace": "boundary",
+  "editor.renderWhitespace": "none",
   "files.encoding": "utf8",
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
