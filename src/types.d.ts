@@ -1,7 +1,15 @@
+import { RoleName } from "roles/role-util";
+
 // example declaration file - remove these and add your own custom typings
 
 interface Manager {
   manageRoom(room: Room): void;
+}
+
+interface RoomMemory {
+  limits: {
+    [roleName: string]: number;
+  }
 }
 
 interface ConfigFlagMemory {
@@ -32,6 +40,7 @@ interface RoleTiers {
 }
 
 interface Role {
+  name: RoleName;
   run: (creep: Creep) => void;
 }
 

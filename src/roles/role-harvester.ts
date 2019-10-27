@@ -1,4 +1,5 @@
-import { getConfig, harvestEnergy } from "./role-util";
+import { getConfig, harvestEnergy, RoleName } from "./role-util";
+import { Role } from "types";
 
 const harvesterPathStyle: PolyStyle = {
     stroke: '#99DD99',
@@ -28,6 +29,9 @@ const work = (creep: Creep, pathStyle: PolyStyle) => {
 }
 
 export const RoleHarvester: Role = {
+
+    name: RoleName.HARVESTER,
+
     run: (creep: Creep) => {
         if (creep.carry.energy < creep.carryCapacity) {
             harvestEnergy(creep, harvesterPathStyle);

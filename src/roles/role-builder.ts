@@ -1,4 +1,5 @@
-import { getConfig, harvestEnergy } from "./role-util";
+import { getConfig, harvestEnergy, RoleName } from "./role-util";
+import { Role, CreepMemory } from "types";
 
 const builderPathStyle: PolyStyle = {
     stroke: '#DD9999',
@@ -24,19 +25,23 @@ const work = (creep: Creep, pathStyle: PolyStyle) => {
 }
 
 export const RoleBuilder: Role = {
+
+    name: RoleName.BUILDER,
+
     run: (creep: Creep) => {
-        if (creep.carry.energy < creep.carryCapacity && !creep.memory.working) {
+        let working = (creep.memory as CreepMemory).working;
+        if (creep.carry.energy < creep.carryCapacity && !working) {
             if (creep.carry.energy < creep.carryCapacity) {
                 harvestEnergy(creep, builderPathStyle);
             }
         } else {
-            creep.memory.working = true;
+            working = true;
         }
-        if (creep.memory.working) {
+        if (working) {
             if (creep.carry.energy > 0) {
                 work(creep, builderPathStyle);
             } else {
-                creep.memory.working = false;
+                working = false;
             }
         }
     }

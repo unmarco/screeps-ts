@@ -1,4 +1,5 @@
-import { getConfig, harvestEnergy } from "./role-util";
+import { getConfig, harvestEnergy, RoleName } from "./role-util";
+import { Role, CreepMemory } from "types";
 
 const upgraderPathStyle: PolyStyle = {
     stroke: '#9999DD',
@@ -18,21 +19,25 @@ const work = (creep: Creep, pathStyle?: PolyStyle) => {
 }
 
 export const RoleUpgrader: Role = {
+
+    name: RoleName.UPGRADER,
+
     run: (creep: Creep) => {
+        let working = (creep.memory as CreepMemory).working;
         if (!_.isUndefined(creep.room.controller)) {
-            if (creep.carry.energy < creep.carryCapacity && !creep.memory.working) {
+            if (creep.carry.energy < creep.carryCapacity && !working) {
                 if (creep.carry.energy < creep.carryCapacity) {
                     harvestEnergy(creep, upgraderPathStyle);
                 }
             } else {
-                creep.memory.working = true;
+                working = true;
             }
 
-            if (creep.memory.working) {
+            if (working) {
                 if (creep.carry.energy > 0) {
                     work(creep, upgraderPathStyle);
                 } else {
-                    creep.memory.working = false;
+                    working = false;
                 }
             }
         } else {

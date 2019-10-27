@@ -1,4 +1,5 @@
-import { getConfig, harvestEnergy } from "./role-util";
+import { getConfig, harvestEnergy, RoleName } from "./role-util";
+import { Role, CreepMemory } from "types";
 
 const repairerPathStyle: PolyStyle = {
     stroke: '#DDDD99',
@@ -35,19 +36,24 @@ const work = (creep: Creep, pathStyle: PolyStyle) => {
 }
 
 export const RoleRepairer: Role = {
+
+    name: RoleName.REPAIRER,
+
     run: (creep: Creep) => {
-        if (creep.carry.energy < creep.carryCapacity && !creep.memory.working) {
+        let working = (creep.memory as CreepMemory).working;
+
+        if (creep.carry.energy < creep.carryCapacity && !working) {
             if (creep.carry.energy < creep.carryCapacity) {
                 harvestEnergy(creep, repairerPathStyle);
             }
         } else {
-            creep.memory.working = true;
+            working = true;
         }
-        if (creep.memory.working) {
+        if (working) {
             if (creep.carry.energy > 0) {
                 work(creep, repairerPathStyle);
             } else {
-                creep.memory.working = false;
+                working = false;
             }
         }
     }

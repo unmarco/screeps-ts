@@ -1,3 +1,5 @@
+import { Role, Manager } from "types";
+
 export class WorkManager implements Manager {
 
     private managedRoles: Role[];
