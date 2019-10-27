@@ -23,6 +23,7 @@ interface Role {
 // Memory extension
 interface CreepMemory {
   role: string;
+  tier: number;
   room: string;
   working: boolean;
 }

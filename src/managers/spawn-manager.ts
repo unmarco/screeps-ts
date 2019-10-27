@@ -56,6 +56,7 @@ export class SpawnManager implements Manager {
             spawn.spawnCreep(body, roleName + Game.time, {
                 memory: {
                     role: roleName,
+                    tier,
                     room: spawn.room.name,
                     working: false
                 }
