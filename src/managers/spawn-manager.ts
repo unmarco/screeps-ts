@@ -15,7 +15,7 @@ import { Role, WorkerFlagMemory, RoomMemory, Manager, TiersByRole } from "types"
 
 const BodyTier: TiersByRole = {
     builder: {
-        TIER_1: [CARRY, WORK, WORK, MOVE, MOVE],
+        TIER_1: [CARRY, WORK, MOVE],
         TIER_2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
         TIER_3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
     },
@@ -25,12 +25,12 @@ const BodyTier: TiersByRole = {
         TIER_3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
     },
     repairer: {
-        TIER_1: [CARRY, WORK, WORK, MOVE, MOVE],
+        TIER_1: [CARRY, WORK, MOVE],
         TIER_2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
         TIER_3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
     },
     upgrader: {
-        TIER_1: [CARRY, WORK, WORK, MOVE, MOVE],
+        TIER_1: [CARRY, WORK, MOVE],
         TIER_2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
         TIER_3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
     }
