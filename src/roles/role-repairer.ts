@@ -56,5 +56,7 @@ export const RoleRepairer: Role = {
                 working = false;
             }
         }
+
+        (creep.memory as CreepMemory).working = working;
     }
 }

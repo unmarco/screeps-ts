@@ -95,16 +95,6 @@ export class SpawnManager implements Manager {
                 if (foundCreeps && foundCreeps.length < limits[role.name]) {
                     const tier: number = (room.memory as RoomMemory).tiers[role.name];
                     spawner(tier, role.name);
-
-                    // const flagName = role.name.substr(0, 1).toUpperCase();
-                    // const flags = room.find(FIND_FLAGS, {
-                    //     filter: (f: Flag) =>
-                    //         f.name === flagName &&
-                    //         (f.memory as WorkerFlagMemory).room === room.name
-                    // });
-                    // if (!_.isEmpty(flags)) {
-                    //     // const tier = (flags[0].memory as WorkerFlagMemory).tier;
-                    // }
                 }
             });
 

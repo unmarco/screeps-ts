@@ -44,5 +44,7 @@ export const RoleBuilder: Role = {
                 working = false;
             }
         }
+
+        (creep.memory as CreepMemory).working = working;
     }
 }

@@ -40,6 +40,8 @@ export const RoleUpgrader: Role = {
                     working = false;
                 }
             }
+
+            (creep.memory as CreepMemory).working = working;
         } else {
             console.log('No controller!');
         }
