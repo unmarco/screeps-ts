@@ -1,4 +1,4 @@
-import { CreepMemory, CreepCollection, ConfigFlagMemory } from "types";
+import { CreepMemory, ConfigFlagMemory } from "types";
 
 export const harvestEnergy = (creep: Creep, pathStyle: PolyStyle) => {
     if (getConfig(creep.room.name).chattyCreeps) {

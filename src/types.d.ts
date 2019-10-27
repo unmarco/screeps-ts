@@ -2,9 +2,29 @@ import { RoleName } from "roles/role-util";
 
 // example declaration file - remove these and add your own custom typings
 
+interface TiersByRole {
+  [roleName: string]: Tiers;
+}
+
+interface Tiers {
+  [tierName: number]: BodyPartConstant[];
+}
+
 interface Manager {
   doBefore(): void;
   manageRoom(room: Room): void;
+}
+
+interface Role {
+  name: RoleName;
+  run: (creep: Creep) => void;
+}
+
+// Memory extension
+interface CreepMemory {
+  role: string;
+  room: string;
+  working: boolean;
 }
 
 interface RoomMemory {
@@ -27,33 +47,6 @@ interface ConfigFlagMemory {
 interface WorkerFlagMemory {
   room: string;
   role: string;
-  // tier: number;
-  // maxCount: number;
-}
-
-interface CreepCollection {
-  role: string;
-  creeps: Creep[];
-}
-
-interface TiersByRole {
-  [roleName: string]: RoleTiers;
-}
-
-interface RoleTiers {
-  [tierName: number]: BodyPartConstant[];
-}
-
-interface Role {
-  name: RoleName;
-  run: (creep: Creep) => void;
-}
-
-// memory extension samples
-interface CreepMemory {
-  role: string;
-  room: string;
-  working: boolean;
 }
 
 interface Memory {
@@ -62,8 +55,8 @@ interface Memory {
 }
 
 // `global` extension samples
-declare namespace NodeJS {
-  interface Global {
-    log: any;
-  }
-}
+// declare namespace NodeJS {
+//   interface Global {
+//     log: any;
+//   }
+// }
