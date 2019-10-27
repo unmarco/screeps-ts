@@ -6,7 +6,7 @@ const repairerPathStyle: PolyStyle = {
 }
 
 const work = (creep: Creep, pathStyle: PolyStyle) => {
-    creep.say('🔨');
+    creep.say('🔧');
     const structures = creep.room.find(FIND_STRUCTURES, {
         filter: (s: AnyStructure) => {
             return s.hits < s.hitsMax;

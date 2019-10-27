@@ -49,12 +49,10 @@ const getByRole = (role: string): Creep[] => _.filter(Game.creeps,
   (c: Creep) => c.memory.role === role)
 
 const bodyCost = (body: BodyPartConstant[]) => {
-  return body.reduce((cost: number, part: BodyPartConstant) => {
-    return cost + BODYPART_COST[part];
-  }, 0);
+  return body.reduce((cost: number, part: BodyPartConstant) => cost + BODYPART_COST[part], 0);
 };
 
-const attemptSpawnWorker = _.curry((spawn: StructureSpawn, tier: string, roleName: string) => {
+const attemptSpawnWorker = _.curry((spawn: StructureSpawn, tier: string, roleName: RoleName) => {
   const body = BodyTier[roleName][tier];
   const cost = bodyCost(body);
   if (spawn.room.energyAvailable >= cost && !spawn.spawning) {
@@ -70,15 +68,6 @@ const attemptSpawnWorker = _.curry((spawn: StructureSpawn, tier: string, roleNam
 
 });
 
-
-
-// const defaultBuilderTier = BodyTier.builder.TIER_1;
-// const defaultHarvesterTier = BodyTier.harvester.TIER_1;
-// const defaultUpgraderTier = BodyTier.upgrader.TIER_1;
-
-
-// When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
-// This utility uses source maps to get the line numbers and file names of the original, TS source code
 export const loop = ErrorMapper.wrapLoop(() => {
   // console.log(`Current game tick is ${Game.time}`);
 
@@ -104,6 +93,10 @@ export const loop = ErrorMapper.wrapLoop(() => {
     {
       creeps: getByRole(RoleName.UPGRADER),
       role: RoleName.UPGRADER
+    },
+    {
+      creeps: getByRole(RoleName.REPAIRER),
+      role: RoleName.REPAIRER
     }
   ];
 
@@ -164,5 +157,12 @@ export const loop = ErrorMapper.wrapLoop(() => {
     }
 
   });
+
+  // Visuals
+  const v = new RoomVisual('E11N18');
+  v.text(`⚡ Harvesters: ${foundHarvesters ? foundHarvesters.creeps.length : 0}`, 17, 18, { align: 'left' });
+  v.text(`🔼 Upgraders: ${foundUpgraders ? foundUpgraders.creeps.length : 0}`, 17, 19, { align: 'left' });
+  v.text(`🔨 Builders: ${foundBuilders ? foundBuilders.creeps.length : 0}`, 17, 20, { align: 'left' });
+  v.text(`🔧 Repairers: ${foundRepairers ? foundRepairers.creeps.length : 0}`, 17, 21, { align: 'left' });
 
 });
