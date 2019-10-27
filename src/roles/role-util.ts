@@ -23,12 +23,12 @@ export const getConfig = (room: string): ConfigFlagMemory => {
         return f.name === 'CONFIG' && fMem.room === room;
     })
     if (flag) {
-        return (flag.memory as ConfigFlagMemory)
+        return (flag.memory as ConfigFlagMemory);
     } else {
         return {
             room,
             chattyCreeps: false
-        }
+        };
     }
 }
 

@@ -22,7 +22,7 @@ const work = (creep: Creep, pathStyle: PolyStyle) => {
             });
         }
     } else {
-        const restFlag = Game.flags[`rest-${creep.memory.role.substr(0, 1)}`];
+        const restFlag = Game.flags['R'];
         creep.moveTo(restFlag);
     }
 }
