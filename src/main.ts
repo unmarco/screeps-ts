@@ -5,11 +5,6 @@ import { RoleUpgrader } from "roles/role-upgrader";
 import { RoleName } from "roles/role-util";
 import { ErrorMapper } from "utils/ErrorMapper";
 
-const maxHarvesters = 2;
-const maxUpgraders = 3;
-const maxBuilders = 2;
-const maxRepairers = 1;
-
 /*
   CARRY 50
   MOVE 50
@@ -68,11 +63,48 @@ const attemptSpawnWorker = _.curry((spawn: StructureSpawn, tier: string, roleNam
 
 });
 
+const setFlagMemory = (flagName: string, newMemory: WorkerFlagMemory) => {
+  const target = Game.flags[flagName];
+  if (target) {
+    target.memory = newMemory;
+  }
+}
+
 export const loop = ErrorMapper.wrapLoop(() => {
   // console.log(`Current game tick is ${Game.time}`);
 
   const spawn1: StructureSpawn = Game.spawns['spawn-1'];
   const controller: StructureController | null = Game.getObjectById('59f1a3b782100e1594f3be39');
+
+  // Flags
+  // setFlagMemory('H', {
+  //   role: RoleName.HARVESTER,
+  //   tier: 'TIER_1',
+  //   maxCount: 2
+  // });
+
+  // setFlagMemory('B', {
+  //   role: RoleName.BUILDER,
+  //   tier: 'TIER_1',
+  //   maxCount: 2
+  // });
+
+  // setFlagMemory('R', {
+  //   role: RoleName.REPAIRER,
+  //   tier: 'TIER_1',
+  //   maxCount: 1
+  // });
+
+  // setFlagMemory('U', {
+  //   role: RoleName.REPAIRER,
+  //   tier: 'TIER_1',
+  //   maxCount: 3
+  // });
+
+  const maxHarvesters = (Game.flags['H'].memory as WorkerFlagMemory).maxCount;
+  const maxUpgraders = (Game.flags['U'].memory as WorkerFlagMemory).maxCount;
+  const maxBuilders = (Game.flags['B'].memory as WorkerFlagMemory).maxCount;
+  const maxRepairers = (Game.flags['R'].memory as WorkerFlagMemory).maxCount;
 
   // Automatically delete memory of missing creeps
   for (const name in Memory.creeps) {
@@ -101,26 +133,34 @@ export const loop = ErrorMapper.wrapLoop(() => {
   ];
 
   // The Creep Spawner
-  const spawner = attemptSpawnWorker(spawn1)('TIER_1');
+  const spawner = attemptSpawnWorker(spawn1);
 
   const foundHarvesters = _.find(allCreeps, (c: CreepCollection) => c.role === RoleName.HARVESTER);
   if (foundHarvesters && foundHarvesters.creeps.length < maxHarvesters) {
-    spawner(RoleName.HARVESTER);
+    const hFlag = Game.flags['H'];
+    const hTier = (hFlag.memory as WorkerFlagMemory).tier;
+    spawner(hTier)(RoleName.HARVESTER);
   }
 
   const foundUpgraders = _.find(allCreeps, (c: CreepCollection) => c.role === RoleName.UPGRADER);
   if (foundUpgraders && foundUpgraders.creeps.length < maxUpgraders) {
-    spawner(RoleName.UPGRADER);
+    const uFlag = Game.flags['H'];
+    const uTier = (uFlag.memory as WorkerFlagMemory).tier;
+    spawner(uTier)(RoleName.UPGRADER);
   }
 
   const foundBuilders = _.find(allCreeps, (c: CreepCollection) => c.role === RoleName.BUILDER);
   if (foundBuilders && foundBuilders.creeps.length < maxBuilders) {
-    spawner(RoleName.BUILDER);
+    const bFlag = Game.flags['H'];
+    const bTier = (bFlag.memory as WorkerFlagMemory).tier;
+    spawner(bTier)(RoleName.BUILDER);
   }
 
   const foundRepairers = _.find(allCreeps, (c: CreepCollection) => c.role === RoleName.REPAIRER);
   if (foundRepairers && foundRepairers.creeps.length < maxRepairers) {
-    spawner(RoleName.REPAIRER);
+    const rFlag = Game.flags['H'];
+    const rTier = (rFlag.memory as WorkerFlagMemory).tier;
+    spawner(rTier)(RoleName.REPAIRER);
   }
 
 
@@ -160,9 +200,17 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
   // Visuals
   const v = new RoomVisual('E11N18');
-  v.text(`⚡ Harvesters: ${foundHarvesters ? foundHarvesters.creeps.length : 0}`, 17, 18, { align: 'left' });
-  v.text(`🔼 Upgraders: ${foundUpgraders ? foundUpgraders.creeps.length : 0}`, 17, 19, { align: 'left' });
-  v.text(`🔨 Builders: ${foundBuilders ? foundBuilders.creeps.length : 0}`, 17, 20, { align: 'left' });
-  v.text(`🔧 Repairers: ${foundRepairers ? foundRepairers.creeps.length : 0}`, 17, 21, { align: 'left' });
+
+  const numHarvesters = foundHarvesters ? foundHarvesters.creeps.length : 0;
+  v.text(`⚡ H: ${numHarvesters}/${maxHarvesters}`, 17, 18, { align: 'left' });
+
+  const numUpgraders = foundUpgraders ? foundUpgraders.creeps.length : 0;
+  v.text(`🔼 U: ${numUpgraders}/${maxUpgraders}`, 17, 19, { align: 'left' });
+
+  const numBuilders = foundBuilders ? foundBuilders.creeps.length : 0;
+  v.text(`🔨 B: ${numBuilders}/${maxBuilders}`, 17, 20, { align: 'left' });
+
+  const numRepairers = foundRepairers ? foundRepairers.creeps.length : 0;
+  v.text(`🔧 R: ${numRepairers}/${maxRepairers}`, 17, 21, { align: 'left' });
 
 });

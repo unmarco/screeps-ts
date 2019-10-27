@@ -1,5 +1,17 @@
-
 // example declaration file - remove these and add your own custom typings
+
+interface ConfigFlagMemory {
+  room: string;
+  chattyCreeps: boolean;
+}
+
+interface WorkerFlagMemory {
+  room: string;
+  role: string;
+  tier: string;
+  maxCount: number;
+}
+
 interface CreepCollection {
   role: string;
   creeps: Creep[];
