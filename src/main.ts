@@ -5,8 +5,8 @@ import { RoleUpgrader } from "roles/role-upgrader";
 import { RoleName } from "roles/role-util";
 import { ErrorMapper } from "utils/ErrorMapper";
 
-const maxHarvesters = 3;
-const maxUpgraders = 2;
+const maxHarvesters = 2;
+const maxUpgraders = 3;
 const maxBuilders = 2;
 const maxRepairers = 1;
 
