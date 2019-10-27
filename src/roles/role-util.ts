@@ -1,11 +1,11 @@
-import { CreepMemory, ConfigFlagMemory } from "types";
+import { CreepMemory, ConfigFlagMemory, NewCreep } from "types";
 
-export const harvestEnergy = (creep: Creep, pathStyle: PolyStyle) => {
+export const harvestEnergy = (creep: NewCreep, pathStyle: PolyStyle) => {
     if (getConfig(creep.room.name).chattyCreeps) {
         creep.say('⚡');
     }
     // const sources: Source[] = creep.room.find(FIND_SOURCES);
-    const source = creep.pos.findClosestByPath(FIND_SOURCES);
+    const source = creep.pos.findClosestByRange(FIND_SOURCES);
     if (!_.isUndefined(source)) {
         if (creep.harvest(source!) === ERR_NOT_IN_RANGE) {
             creep.moveTo(source!, {

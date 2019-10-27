@@ -1,12 +1,12 @@
 import { getConfig, harvestEnergy, RoleName } from "./role-util";
-import { Role, CreepMemory } from "types";
+import { Role, CreepMemory, NewCreep } from "types";
 
 const repairerPathStyle: PolyStyle = {
     stroke: '#DDDD99',
     strokeWidth: 0.1,
 }
 
-const work = (creep: Creep, pathStyle: PolyStyle) => {
+const work = (creep: NewCreep, pathStyle: PolyStyle) => {
     if (getConfig(creep.room.name).chattyCreeps) {
         creep.say('🔧');
     }
@@ -39,7 +39,7 @@ export const RoleRepairer: Role = {
 
     name: RoleName.REPAIRER,
 
-    run: (creep: Creep) => {
+    run: (creep: NewCreep) => {
         let working = (creep.memory as CreepMemory).working;
 
         if (creep.carry.energy < creep.carryCapacity && !working) {

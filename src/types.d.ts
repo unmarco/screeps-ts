@@ -1,5 +1,15 @@
 import { RoleName } from "roles/role-util";
 
+interface Store {
+  getCapacity(resource?: ResourceConstant): number;
+  getFreeCapacity(resource?: ResourceConstant): number;
+  getUsedCapacity(resource?: ResourceConstant): number;
+}
+
+interface NewCreep extends Creep {
+  store: Store;
+}
+
 // example declaration file - remove these and add your own custom typings
 
 interface TiersByRole {
@@ -17,7 +27,7 @@ interface Manager {
 
 interface Role {
   name: RoleName;
-  run: (creep: Creep) => void;
+  run: (creep: NewCreep) => void;
 }
 
 // Memory extension

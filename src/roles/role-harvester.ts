@@ -1,12 +1,12 @@
 import { getConfig, harvestEnergy, RoleName } from "./role-util";
-import { Role } from "types";
+import { Role, NewCreep } from "types";
 
 const harvesterPathStyle: PolyStyle = {
     stroke: '#99DD99',
     strokeWidth: 0.1,
 }
 
-const work = (creep: Creep, pathStyle: PolyStyle) => {
+const work = (creep: NewCreep, pathStyle: PolyStyle) => {
     if (getConfig(creep.room.name).chattyCreeps) {
         creep.say('🔽');
     }
@@ -32,7 +32,7 @@ export const RoleHarvester: Role = {
 
     name: RoleName.HARVESTER,
 
-    run: (creep: Creep) => {
+    run: (creep: NewCreep) => {
         if (creep.carry.energy < creep.carryCapacity) {
             harvestEnergy(creep, harvesterPathStyle);
         } else {

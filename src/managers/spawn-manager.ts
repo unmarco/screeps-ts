@@ -52,7 +52,7 @@ export class SpawnManager implements Manager {
         const body = BodyTier[roleName][tier];
         const cost = this.bodyCost(body);
         if (spawn.room.energyAvailable >= cost && !spawn.spawning) {
-            console.log(`Spawning a ${roleName} creep`);
+            console.log(`Spawning a new creep with role: ${roleName}`);
             spawn.spawnCreep(body, roleName + Game.time, {
                 memory: {
                     role: roleName,

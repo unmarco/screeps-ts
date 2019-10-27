@@ -1,4 +1,4 @@
-import { Role, Manager, CreepMemory } from "types";
+import { Role, Manager, CreepMemory, NewCreep } from "types";
 
 export class WorkManager implements Manager {
 
@@ -16,9 +16,10 @@ export class WorkManager implements Manager {
         room.find(FIND_MY_CREEPS, {
             filter: (c: Creep) => _.has(c.memory, 'role')
         }).forEach((creep: Creep) => {
+            const nCreep = creep as NewCreep;
             this.managedRoles.forEach((role: Role) => {
-                if ((creep.memory as CreepMemory).role === role.name) {
-                    role.run(creep);
+                if ((nCreep.memory as CreepMemory).role === role.name) {
+                    role.run(nCreep);
                 }
             });
         });
