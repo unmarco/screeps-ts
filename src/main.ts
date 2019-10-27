@@ -1,9 +1,11 @@
+import { ErrorMapper } from "utils/ErrorMapper";
+
+import { RoleName, getByRole } from "roles/role-util";
 import { RoleBuilder } from "roles/role-builder";
 import { RoleHarvester } from "roles/role-harvester";
 import { RoleRepairer } from "roles/role-repairer";
 import { RoleUpgrader } from "roles/role-upgrader";
-import { RoleName, getByRole } from "roles/role-util";
-import { ErrorMapper } from "utils/ErrorMapper";
+
 import { WorkManager } from "managers/work-manager";
 
 /*
@@ -72,7 +74,6 @@ export const loop = ErrorMapper.wrapLoop(() => {
   // console.log(`Current game tick is ${Game.time}`);
 
   const spawn1: StructureSpawn = Game.spawns['spawn-1'];
-  const controller: StructureController | null = Game.getObjectById('59f1a3b782100e1594f3be39');
 
   const maxHarvesters = (Game.flags['H'].memory as WorkerFlagMemory).maxCount;
   const maxUpgraders = (Game.flags['U'].memory as WorkerFlagMemory).maxCount;
