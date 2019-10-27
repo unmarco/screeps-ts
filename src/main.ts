@@ -2,8 +2,9 @@ import { RoleBuilder } from "roles/role-builder";
 import { RoleHarvester } from "roles/role-harvester";
 import { RoleRepairer } from "roles/role-repairer";
 import { RoleUpgrader } from "roles/role-upgrader";
-import { RoleName } from "roles/role-util";
+import { RoleName, getByRole } from "roles/role-util";
 import { ErrorMapper } from "utils/ErrorMapper";
+import { WorkManager } from "managers/work-manager";
 
 /*
   CARRY 50
@@ -40,9 +41,6 @@ const BodyTier: TiersByRole = {
   }
 };
 
-const getByRole = (role: string): Creep[] => _.filter(Game.creeps,
-  (c: Creep) => !c.spawning && c.memory.role === role);
-
 const bodyCost = (body: BodyPartConstant[]) => {
   return body.reduce((cost: number, part: BodyPartConstant) => cost + BODYPART_COST[part], 0);
 };
@@ -62,6 +60,8 @@ const attemptSpawnWorker = _.curry((spawn: StructureSpawn, tier: string, roleNam
   }
 
 });
+
+const workManager: WorkManager = new WorkManager();
 
 export const loop = ErrorMapper.wrapLoop(() => {
   // console.log(`Current game tick is ${Game.time}`);
@@ -131,40 +131,41 @@ export const loop = ErrorMapper.wrapLoop(() => {
     spawner(rTier)(RoleName.REPAIRER);
   }
 
+  workManager.manageRoom(Game.rooms['E11N18']);
 
   // The Creep Loop
-  _.forEach(Game.creeps, (creep: Creep) => {
+  // _.forEach(Game.creeps, (creep: Creep) => {
 
-    if (creep.memory.role) {
-      switch (creep.memory.role) {
+  //   if (creep.memory.role) {
+  //     switch (creep.memory.role) {
 
-        case RoleName.BUILDER: {
-          RoleBuilder.run(creep);
-          break;
-        }
+  //       case RoleName.BUILDER: {
+  //         RoleBuilder.run(creep);
+  //         break;
+  //       }
 
-        case RoleName.HARVESTER: {
-          RoleHarvester.run(creep, spawn1);
-          break;
-        }
+  //       case RoleName.HARVESTER: {
+  //         RoleHarvester.run(creep, spawn1);
+  //         break;
+  //       }
 
-        case RoleName.UPGRADER: {
-          if (controller !== null) {
-            RoleUpgrader.run(creep, controller);
-          }
-          break;
-        }
+  //       case RoleName.UPGRADER: {
+  //         if (controller !== null) {
+  //           RoleUpgrader.run(creep, controller);
+  //         }
+  //         break;
+  //       }
 
-        case RoleName.REPAIRER: {
-          RoleRepairer.run(creep);
-          break;
-        }
+  //       case RoleName.REPAIRER: {
+  //         RoleRepairer.run(creep);
+  //         break;
+  //       }
 
-        default: console.error(`Creep '${creep.name}' has no recognized role or no role at all`);
-      }
-    }
+  //       default: console.error(`Creep '${creep.name}' has no recognized role or no role at all`);
+  //     }
+  //   }
 
-  });
+  // });
 
   // Visuals
   const v = new RoomVisual('E11N18');

@@ -1,5 +1,9 @@
 // example declaration file - remove these and add your own custom typings
 
+interface Manager {
+  manageRoom(room: Room): void;
+}
+
 interface ConfigFlagMemory {
   room: string;
   chattyCreeps: boolean;

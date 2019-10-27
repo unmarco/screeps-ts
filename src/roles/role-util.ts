@@ -34,4 +34,29 @@ export const getConfig = (room: string): ConfigFlagMemory => {
     }
 }
 
+export const getByRole = (role: string): Creep[] => _.filter(Game.creeps,
+    (c: Creep) => !c.spawning && c.memory.role === role);
+
+export const getAllCreeps = (room: Room): CreepCollection[] => {
+    const allCreeps: CreepCollection[] = [
+        {
+            creeps: getByRole(RoleName.HARVESTER),
+            role: RoleName.HARVESTER
+        },
+        {
+            creeps: getByRole(RoleName.BUILDER),
+            role: RoleName.BUILDER
+        },
+        {
+            creeps: getByRole(RoleName.UPGRADER),
+            role: RoleName.UPGRADER
+        },
+        {
+            creeps: getByRole(RoleName.REPAIRER),
+            role: RoleName.REPAIRER
+        }
+    ];
+
+    return allCreeps;
+}
 
