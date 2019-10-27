@@ -15,24 +15,24 @@ import { Role, WorkerFlagMemory, RoomMemory, Manager, TiersByRole } from "types"
 
 const BodyTier: TiersByRole = {
     builder: {
-        TIER_1: [CARRY, WORK, MOVE],
-        TIER_2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
-        TIER_3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
+        1: [CARRY, WORK, MOVE],
+        2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
+        3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
     },
     harvester: {
-        TIER_1: [CARRY, WORK, MOVE],
-        TIER_2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
-        TIER_3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
+        1: [CARRY, WORK, MOVE],
+        2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
+        3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
     },
     repairer: {
-        TIER_1: [CARRY, WORK, MOVE],
-        TIER_2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
-        TIER_3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
+        1: [CARRY, WORK, MOVE],
+        2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
+        3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
     },
     upgrader: {
-        TIER_1: [CARRY, WORK, MOVE],
-        TIER_2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
-        TIER_3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
+        1: [CARRY, WORK, MOVE],
+        2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
+        3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
     }
 };
 
@@ -48,7 +48,7 @@ export class SpawnManager implements Manager {
         return body.reduce((cost: number, part: BodyPartConstant) => cost + BODYPART_COST[part], 0);
     }
 
-    private attemptSpawnWorker = _.curry((spawn: StructureSpawn, tier: string, roleName: RoleName) => {
+    private attemptSpawnWorker = _.curry((spawn: StructureSpawn, tier: number, roleName: RoleName) => {
         const body = BodyTier[roleName][tier];
         const cost = this.bodyCost(body);
         if (spawn.room.energyAvailable >= cost && !spawn.spawning) {
@@ -93,16 +93,18 @@ export class SpawnManager implements Manager {
             this.managedRoles.forEach((role: Role) => {
                 const foundCreeps = getByRole(role.name);
                 if (foundCreeps && foundCreeps.length < limits[role.name]) {
-                    const flagName = role.name.substr(0, 1).toUpperCase();
-                    const flags = room.find(FIND_FLAGS, {
-                        filter: (f: Flag) =>
-                            f.name === flagName &&
-                            (f.memory as WorkerFlagMemory).room === room.name
-                    });
-                    if (!_.isEmpty(flags)) {
-                        const tier = (flags[0].memory as WorkerFlagMemory).tier;
-                        spawner(tier)(role.name);
-                    }
+                    const tier: number = (room.memory as RoomMemory).tiers[role.name];
+                    spawner(tier, role.name);
+
+                    // const flagName = role.name.substr(0, 1).toUpperCase();
+                    // const flags = room.find(FIND_FLAGS, {
+                    //     filter: (f: Flag) =>
+                    //         f.name === flagName &&
+                    //         (f.memory as WorkerFlagMemory).room === room.name
+                    // });
+                    // if (!_.isEmpty(flags)) {
+                    //     // const tier = (flags[0].memory as WorkerFlagMemory).tier;
+                    // }
                 }
             });
 

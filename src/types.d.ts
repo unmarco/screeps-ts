@@ -10,6 +10,10 @@ interface Manager {
 interface RoomMemory {
   limits: {
     [roleName: string]: number;
+  };
+
+  tiers: {
+    [roleName: string]: number;
   }
 }
 
@@ -23,8 +27,8 @@ interface ConfigFlagMemory {
 interface WorkerFlagMemory {
   room: string;
   role: string;
-  tier: string;
-  maxCount: number;
+  // tier: number;
+  // maxCount: number;
 }
 
 interface CreepCollection {
@@ -37,7 +41,7 @@ interface TiersByRole {
 }
 
 interface RoleTiers {
-  [tierName: string]: BodyPartConstant[];
+  [tierName: number]: BodyPartConstant[];
 }
 
 interface Role {
