@@ -7,29 +7,27 @@ import { RoleUpgrader } from "roles/role-upgrader";
 
 import { WorkManager } from "managers/work-manager";
 import { SpawnManager } from "managers/spawn-manager";
+import { Manager } from "types";
 
-const spawnManager: SpawnManager = new SpawnManager([
-  RoleHarvester,
-  RoleUpgrader,
-  RoleBuilder,
-  RoleRepairer
-]);
+const managedRoles = [
+  RoleHarvester, RoleUpgrader, RoleBuilder, RoleRepairer
+];
 
-const workManager: WorkManager = new WorkManager([
-  RoleHarvester,
-  RoleUpgrader,
-  RoleBuilder,
-  RoleRepairer
-]);
+const managers: Manager[] = [
+  new SpawnManager(managedRoles),
+  new WorkManager(managedRoles)
+];
 
 export const loop = ErrorMapper.wrapLoop(() => {
-  // console.log(`Current game tick is ${Game.time}`);
 
-  spawnManager.handleDeadCreeps();
+  managers.forEach((manager: Manager) => {
 
-  _.forEach(Game.rooms, (room: Room) => {
-    spawnManager.manageRoom(room)
-    workManager.manageRoom(room);
+    manager.doBefore();
+
+    _.forEach(Game.rooms, (room: Room) => {
+      manager.manageRoom(room);
+    });
+
   });
 
 });

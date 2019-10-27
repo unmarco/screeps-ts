@@ -8,6 +8,10 @@ export class WorkManager implements Manager {
         this.managedRoles = roles;
     }
 
+    public doBefore = () => {
+        // DO NOTHING
+    }
+
     public manageRoom = (room: Room): void => {
         room.find(FIND_MY_CREEPS, {
             filter: (c: Creep) => _.has(c.memory, 'role')

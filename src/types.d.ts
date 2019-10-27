@@ -3,6 +3,7 @@ import { RoleName } from "roles/role-util";
 // example declaration file - remove these and add your own custom typings
 
 interface Manager {
+  doBefore(): void;
   manageRoom(room: Room): void;
 }
 

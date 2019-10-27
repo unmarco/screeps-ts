@@ -20,7 +20,7 @@ const BodyTier: TiersByRole = {
         TIER_3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
     },
     harvester: {
-        TIER_1: [CARRY, WORK, WORK, MOVE, MOVE],
+        TIER_1: [CARRY, WORK, MOVE],
         TIER_2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
         TIER_3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
     },
@@ -73,6 +73,10 @@ export class SpawnManager implements Manager {
                 delete Memory.creeps[name];
             }
         }
+    }
+
+    public doBefore = () => {
+        this.handleDeadCreeps();
     }
 
     public manageRoom = (room: Room): void => {
