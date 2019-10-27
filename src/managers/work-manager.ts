@@ -1,6 +1,3 @@
-import { RoleBuilder } from "roles/role-builder";
-import { RoleHarvester } from "roles/role-harvester";
-import { RoleRepairer } from "roles/role-repairer";
 export class WorkManager implements Manager {
 
     private managedRoles: Role[];
