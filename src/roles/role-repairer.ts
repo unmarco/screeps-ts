@@ -1,17 +1,21 @@
 import { harvestEnergy } from "./role-util";
 
-const builderPathStyle: PolyStyle = {
-    stroke: '#DD9999',
+const repairerPathStyle: PolyStyle = {
+    stroke: '#DDDD99',
     strokeWidth: 0.1,
 }
 
 const work = (creep: Creep, pathStyle: PolyStyle) => {
     creep.say('🔨');
-    const sites = _.sortBy(creep.room.find(FIND_CONSTRUCTION_SITES), 'progressTotal');
+    const structures = creep.room.find(FIND_STRUCTURES, {
+        filter: (s: AnyStructure) => {
+            return s.hits < s.hitsMax;
+        }
+    });
 
-    if (sites.length > 0) {
-        if (creep.build(sites[0] as ConstructionSite) === ERR_NOT_IN_RANGE) {
-            creep.moveTo(sites[0], {
+    if (structures.length > 0) {
+        if (creep.repair(structures[0]) === ERR_NOT_IN_RANGE) {
+            creep.moveTo(structures[0], {
                 visualizePathStyle: pathStyle
             });
         }
@@ -21,18 +25,18 @@ const work = (creep: Creep, pathStyle: PolyStyle) => {
     }
 }
 
-export const RoleBuilder: Role = {
+export const RoleRepairer: Role = {
     run: (creep: Creep) => {
         if (creep.carry.energy < creep.carryCapacity && !creep.memory.working) {
             if (creep.carry.energy < creep.carryCapacity) {
-                harvestEnergy(creep, builderPathStyle);
+                harvestEnergy(creep, repairerPathStyle);
             }
         } else {
             creep.memory.working = true;
         }
         if (creep.memory.working) {
             if (creep.carry.energy > 0) {
-                work(creep, builderPathStyle);
+                work(creep, repairerPathStyle);
             } else {
                 creep.memory.working = false;
             }

@@ -1,24 +1,33 @@
+import { harvestEnergy } from "./role-util";
+
+const upgraderPathStyle: PolyStyle = {
+    stroke: '#9999DD',
+    strokeWidth: 0.1,
+}
+
+const work = (creep: Creep, controller?: AnyStructure) => {
+    creep.say('🔼');
+    if (creep.upgradeController(controller as StructureController) === ERR_NOT_IN_RANGE) {
+        creep.moveTo(controller as AnyStructure, {
+            visualizePathStyle: upgraderPathStyle
+        });
+    }
+}
+
 export const RoleUpgrader: Role = {
     run: (creep: Creep, controller?: AnyStructure) => {
         if (creep.carry.energy < creep.carryCapacity && !creep.memory.working) {
             if (creep.carry.energy < creep.carryCapacity) {
-                const sources: Source[] = creep.room.find(FIND_SOURCES);
-                if (creep.harvest(sources[0]) === ERR_NOT_IN_RANGE) {
-                    creep.moveTo(sources[0]);
-                }
+                harvestEnergy(creep, upgraderPathStyle);
             }
         } else {
-            creep.say('🔼');
             creep.memory.working = true;
         }
 
         if (creep.memory.working) {
             if (creep.carry.energy > 0) {
-                if (creep.upgradeController(controller as StructureController) === ERR_NOT_IN_RANGE) {
-                    creep.moveTo(controller as AnyStructure);
-                }
+                work(creep, controller);
             } else {
-                creep.say('⚡');
                 creep.memory.working = false;
             }
         }

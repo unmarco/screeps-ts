@@ -1,10 +1,17 @@
-// example declaration file - remove these and add your own custom typings
 
+// example declaration file - remove these and add your own custom typings
 interface CreepCollection {
   role: string;
   creeps: Creep[];
 }
 
+interface TiersByRole {
+  [roleName: string]: RoleTiers;
+}
+
+interface RoleTiers {
+  [tierName: string]: BodyPartConstant[];
+}
 
 interface Role {
   run: (creep: Creep, s?: AnyStructure) => void;

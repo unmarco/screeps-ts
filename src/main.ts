@@ -1,11 +1,49 @@
 import { RoleBuilder } from "roles/role-builder";
 import { RoleHarvester } from "roles/role-harvester";
+import { RoleRepairer } from "roles/role-repairer";
 import { RoleUpgrader } from "roles/role-upgrader";
+import { RoleName } from "roles/role-util";
 import { ErrorMapper } from "utils/ErrorMapper";
 
+const maxHarvesters = 3;
+const maxUpgraders = 2;
 const maxBuilders = 2;
-const maxHarvesters = 2;
-const maxUpgraders = 3;
+const maxRepairers = 1;
+
+/*
+  CARRY 50
+  MOVE 50
+  WORK 100
+
+  ATTACK 80
+  RANGED_ATTACK 150
+  HEAL 250
+  TOUGH 10
+  CLAIM 600
+ */
+
+const BodyTier: TiersByRole = {
+  builder: {
+    TIER_1: [CARRY, WORK, WORK, MOVE, MOVE],
+    TIER_2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
+    TIER_3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
+  },
+  harvester: {
+    TIER_1: [CARRY, WORK, WORK, MOVE, MOVE],
+    TIER_2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
+    TIER_3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
+  },
+  repairer: {
+    TIER_1: [CARRY, WORK, WORK, MOVE, MOVE],
+    TIER_2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
+    TIER_3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
+  },
+  upgrader: {
+    TIER_1: [CARRY, WORK, WORK, MOVE, MOVE],
+    TIER_2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
+    TIER_3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
+  }
+};
 
 const getByRole = (role: string): Creep[] => _.filter(Game.creeps,
   (c: Creep) => c.memory.role === role)
@@ -16,11 +54,28 @@ const bodyCost = (body: BodyPartConstant[]) => {
   }, 0);
 };
 
-const enum RoleName {
-  BUILDER = 'builder',
-  HARVESTER = 'harvester',
-  UPGRADER = 'upgrader'
-};
+const attemptSpawnWorker = _.curry((spawn: StructureSpawn, tier: string, roleName: string) => {
+  const body = BodyTier[roleName][tier];
+  const cost = bodyCost(body);
+  if (spawn.room.energyAvailable >= cost && !spawn.spawning) {
+    console.log(`Spawning a ${roleName} creep`);
+    spawn.spawnCreep(body, roleName + Game.time, {
+      memory: {
+        role: roleName,
+        room: spawn.room.name,
+        working: false
+      }
+    });
+  }
+
+});
+
+
+
+// const defaultBuilderTier = BodyTier.builder.TIER_1;
+// const defaultHarvesterTier = BodyTier.harvester.TIER_1;
+// const defaultUpgraderTier = BodyTier.upgrader.TIER_1;
+
 
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
@@ -52,49 +107,27 @@ export const loop = ErrorMapper.wrapLoop(() => {
     }
   ];
 
+  // The Creep Spawner
+  const spawner = attemptSpawnWorker(spawn1)('TIER_1');
+
   const foundHarvesters = _.find(allCreeps, (c: CreepCollection) => c.role === RoleName.HARVESTER);
   if (foundHarvesters && foundHarvesters.creeps.length < maxHarvesters) {
-    const cost = bodyCost([CARRY, WORK, MOVE]);
-    if (spawn1.room.energyAvailable >= cost) {
-      console.log(`Spawning a ${RoleName.HARVESTER} creep`);
-      spawn1.spawnCreep([CARRY, WORK, MOVE], RoleName.HARVESTER + Game.time, {
-        memory: {
-          role: RoleName.HARVESTER,
-          room: spawn1.room.name,
-          working: false
-        }
-      });
-    }
+    spawner(RoleName.HARVESTER);
   }
 
   const foundUpgraders = _.find(allCreeps, (c: CreepCollection) => c.role === RoleName.UPGRADER);
   if (foundUpgraders && foundUpgraders.creeps.length < maxUpgraders) {
-    const cost = bodyCost([CARRY, WORK, MOVE]);
-    if (spawn1.room.energyAvailable >= cost) {
-      console.log(`Spawning a ${RoleName.UPGRADER} creep`);
-      spawn1.spawnCreep([CARRY, WORK, MOVE], RoleName.UPGRADER + Game.time, {
-        memory: {
-          role: RoleName.UPGRADER,
-          room: spawn1.room.name,
-          working: false
-        }
-      });
-    }
+    spawner(RoleName.UPGRADER);
   }
 
   const foundBuilders = _.find(allCreeps, (c: CreepCollection) => c.role === RoleName.BUILDER);
   if (foundBuilders && foundBuilders.creeps.length < maxBuilders) {
-    const cost = bodyCost([CARRY, WORK, MOVE]);
-    if (spawn1.room.energyAvailable >= cost) {
-      console.log(`Spawning a ${RoleName.BUILDER} creep`);
-      spawn1.spawnCreep([CARRY, WORK, MOVE], RoleName.BUILDER + Game.time, {
-        memory: {
-          role: RoleName.BUILDER,
-          room: spawn1.room.name,
-          working: false
-        }
-      });
-    }
+    spawner(RoleName.BUILDER);
+  }
+
+  const foundRepairers = _.find(allCreeps, (c: CreepCollection) => c.role === RoleName.REPAIRER);
+  if (foundRepairers && foundRepairers.creeps.length < maxRepairers) {
+    spawner(RoleName.REPAIRER);
   }
 
 
@@ -118,6 +151,11 @@ export const loop = ErrorMapper.wrapLoop(() => {
           if (controller !== null) {
             RoleUpgrader.run(creep, controller);
           }
+          break;
+        }
+
+        case RoleName.REPAIRER: {
+          RoleRepairer.run(creep);
           break;
         }
 
