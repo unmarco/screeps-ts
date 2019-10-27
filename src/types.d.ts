@@ -3,6 +3,8 @@
 interface ConfigFlagMemory {
   room: string;
   chattyCreeps: boolean;
+  wallHitpoints: number;
+  rampartHitpoints: number;
 }
 
 interface WorkerFlagMemory {

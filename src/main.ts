@@ -41,7 +41,7 @@ const BodyTier: TiersByRole = {
 };
 
 const getByRole = (role: string): Creep[] => _.filter(Game.creeps,
-  (c: Creep) => c.memory.role === role)
+  (c: Creep) => !c.spawning && c.memory.role === role);
 
 const bodyCost = (body: BodyPartConstant[]) => {
   return body.reduce((cost: number, part: BodyPartConstant) => cost + BODYPART_COST[part], 0);
@@ -63,43 +63,11 @@ const attemptSpawnWorker = _.curry((spawn: StructureSpawn, tier: string, roleNam
 
 });
 
-const setFlagMemory = (flagName: string, newMemory: WorkerFlagMemory) => {
-  const target = Game.flags[flagName];
-  if (target) {
-    target.memory = newMemory;
-  }
-}
-
 export const loop = ErrorMapper.wrapLoop(() => {
   // console.log(`Current game tick is ${Game.time}`);
 
   const spawn1: StructureSpawn = Game.spawns['spawn-1'];
   const controller: StructureController | null = Game.getObjectById('59f1a3b782100e1594f3be39');
-
-  // Flags
-  // setFlagMemory('H', {
-  //   role: RoleName.HARVESTER,
-  //   tier: 'TIER_1',
-  //   maxCount: 2
-  // });
-
-  // setFlagMemory('B', {
-  //   role: RoleName.BUILDER,
-  //   tier: 'TIER_1',
-  //   maxCount: 2
-  // });
-
-  // setFlagMemory('R', {
-  //   role: RoleName.REPAIRER,
-  //   tier: 'TIER_1',
-  //   maxCount: 1
-  // });
-
-  // setFlagMemory('U', {
-  //   role: RoleName.REPAIRER,
-  //   tier: 'TIER_1',
-  //   maxCount: 3
-  // });
 
   const maxHarvesters = (Game.flags['H'].memory as WorkerFlagMemory).maxCount;
   const maxUpgraders = (Game.flags['U'].memory as WorkerFlagMemory).maxCount;

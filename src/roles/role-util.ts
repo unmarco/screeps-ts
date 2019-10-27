@@ -27,7 +27,9 @@ export const getConfig = (room: string): ConfigFlagMemory => {
     } else {
         return {
             room,
-            chattyCreeps: false
+            chattyCreeps: false,
+            wallHitpoints: 50000,
+            rampartHitpoints: 35000
         };
     }
 }

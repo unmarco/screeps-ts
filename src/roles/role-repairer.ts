@@ -9,9 +9,16 @@ const work = (creep: Creep, pathStyle: PolyStyle) => {
     if (getConfig(creep.room.name).chattyCreeps) {
         creep.say('🔧');
     }
+    const wallHitpoints = getConfig(creep.room.name).wallHitpoints;
+    const rampartHitpoints = getConfig(creep.room.name).rampartHitpoints;
     const structures = creep.room.find(FIND_STRUCTURES, {
         filter: (s: AnyStructure) => {
-            return s.hits < s.hitsMax;
+            const isWall = s.structureType === STRUCTURE_WALL;
+            const isRampart = s.structureType === STRUCTURE_RAMPART;
+            const isWallOrRampart = isWall || isRampart;
+            return (isWall && s.hits < wallHitpoints) ||
+                (isRampart && s.hits < rampartHitpoints) ||
+                (!isWallOrRampart && s.hits < s.hitsMax);
         }
     });
 
