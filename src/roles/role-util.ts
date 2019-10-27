@@ -20,7 +20,7 @@ export const enum RoleName {
 export const getConfig = (room: string): ConfigFlagMemory => {
     const flag = _.find(Game.flags, (f: Flag) => {
         const fMem = f.memory as ConfigFlagMemory;
-        return fMem.room === room;
+        return f.name === 'CONFIG' && fMem.room === room;
     })
     if (flag) {
         return (flag.memory as ConfigFlagMemory)
