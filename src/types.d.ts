@@ -32,7 +32,7 @@ interface RoleTiers {
 }
 
 interface Role {
-  run: (creep: Creep, s?: AnyStructure) => void;
+  run: (creep: Creep) => void;
 }
 
 // memory extension samples

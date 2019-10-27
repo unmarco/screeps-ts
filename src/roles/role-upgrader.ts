@@ -5,33 +5,38 @@ const upgraderPathStyle: PolyStyle = {
     strokeWidth: 0.1,
 }
 
-const work = (creep: Creep, controller?: AnyStructure) => {
+const work = (creep: Creep, pathStyle?: PolyStyle) => {
+    const controller = creep.room.controller!;
     if (getConfig(creep.room.name).chattyCreeps) {
         creep.say('🔼');
     }
-    if (creep.upgradeController(controller as StructureController) === ERR_NOT_IN_RANGE) {
-        creep.moveTo(controller as AnyStructure, {
-            visualizePathStyle: upgraderPathStyle
+    if (creep.upgradeController(controller) === ERR_NOT_IN_RANGE) {
+        creep.moveTo(controller, {
+            visualizePathStyle: pathStyle
         });
     }
 }
 
 export const RoleUpgrader: Role = {
-    run: (creep: Creep, controller?: AnyStructure) => {
-        if (creep.carry.energy < creep.carryCapacity && !creep.memory.working) {
-            if (creep.carry.energy < creep.carryCapacity) {
-                harvestEnergy(creep, upgraderPathStyle);
+    run: (creep: Creep) => {
+        if (!_.isUndefined(creep.room.controller)) {
+            if (creep.carry.energy < creep.carryCapacity && !creep.memory.working) {
+                if (creep.carry.energy < creep.carryCapacity) {
+                    harvestEnergy(creep, upgraderPathStyle);
+                }
+            } else {
+                creep.memory.working = true;
+            }
+
+            if (creep.memory.working) {
+                if (creep.carry.energy > 0) {
+                    work(creep, upgraderPathStyle);
+                } else {
+                    creep.memory.working = false;
+                }
             }
         } else {
-            creep.memory.working = true;
-        }
-
-        if (creep.memory.working) {
-            if (creep.carry.energy > 0) {
-                work(creep, controller);
-            } else {
-                creep.memory.working = false;
-            }
+            console.log('No controller!');
         }
     }
 }

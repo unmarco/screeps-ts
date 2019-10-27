@@ -61,7 +61,12 @@ const attemptSpawnWorker = _.curry((spawn: StructureSpawn, tier: string, roleNam
 
 });
 
-const workManager: WorkManager = new WorkManager();
+const workManager: WorkManager = new WorkManager([
+  RoleHarvester,
+  RoleUpgrader,
+  RoleBuilder,
+  RoleRepairer
+]);
 
 export const loop = ErrorMapper.wrapLoop(() => {
   // console.log(`Current game tick is ${Game.time}`);
@@ -132,40 +137,6 @@ export const loop = ErrorMapper.wrapLoop(() => {
   }
 
   workManager.manageRoom(Game.rooms['E11N18']);
-
-  // The Creep Loop
-  // _.forEach(Game.creeps, (creep: Creep) => {
-
-  //   if (creep.memory.role) {
-  //     switch (creep.memory.role) {
-
-  //       case RoleName.BUILDER: {
-  //         RoleBuilder.run(creep);
-  //         break;
-  //       }
-
-  //       case RoleName.HARVESTER: {
-  //         RoleHarvester.run(creep, spawn1);
-  //         break;
-  //       }
-
-  //       case RoleName.UPGRADER: {
-  //         if (controller !== null) {
-  //           RoleUpgrader.run(creep, controller);
-  //         }
-  //         break;
-  //       }
-
-  //       case RoleName.REPAIRER: {
-  //         RoleRepairer.run(creep);
-  //         break;
-  //       }
-
-  //       default: console.error(`Creep '${creep.name}' has no recognized role or no role at all`);
-  //     }
-  //   }
-
-  // });
 
   // Visuals
   const v = new RoomVisual('E11N18');
