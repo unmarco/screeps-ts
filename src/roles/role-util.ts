@@ -1,5 +1,7 @@
 export const harvestEnergy = (creep: Creep, pathStyle: PolyStyle) => {
-    creep.say('⚡');
+    if (getConfig(creep.room.name).chattyCreeps) {
+        creep.say('⚡');
+    }
     const sources: Source[] = creep.room.find(FIND_SOURCES);
     if (creep.harvest(sources[0]) === ERR_NOT_IN_RANGE) {
         creep.moveTo(sources[0], {
@@ -14,5 +16,20 @@ export const enum RoleName {
     REPAIRER = 'repairer',
     UPGRADER = 'upgrader'
 };
+
+export const getConfig = (room: string): ConfigFlagMemory => {
+    const flag = _.find(Game.flags, (f: Flag) => {
+        const fMem = f.memory as ConfigFlagMemory;
+        return fMem.room === room;
+    })
+    if (flag) {
+        return (flag.memory as ConfigFlagMemory)
+    } else {
+        return {
+            room,
+            chattyCreeps: false
+        }
+    }
+}
 
 
