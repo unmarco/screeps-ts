@@ -10,11 +10,12 @@ const work = (creep: NewCreep, pathStyle: PolyStyle) => {
     if (getConfig(creep.room.name).chattyCreeps) {
         creep.say('🔨');
     }
-    const sites = _.sortBy(creep.room.find(FIND_CONSTRUCTION_SITES), 'progressTotal');
 
-    if (sites.length > 0) {
-        if (creep.build(sites[0] as ConstructionSite) === ERR_NOT_IN_RANGE) {
-            creep.moveTo(sites[0], {
+    const site = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
+
+    if (!_.isUndefined(site)) {
+        if (creep.build(site as ConstructionSite) === ERR_NOT_IN_RANGE) {
+            creep.moveTo((site as ConstructionSite), {
                 visualizePathStyle: pathStyle
             });
         }

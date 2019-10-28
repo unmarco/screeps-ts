@@ -9,6 +9,7 @@ import { WorkManager } from "managers/work-manager";
 import { SpawnManager } from "managers/spawn-manager";
 import { Manager, RoomMemory } from "types";
 import { getByRole, RoleName } from "roles/role-util";
+import { DefenseManager } from "managers/defense-manager";
 
 const managedRoles = [
   RoleHarvester, RoleUpgrader, RoleBuilder, RoleRepairer
@@ -16,7 +17,8 @@ const managedRoles = [
 
 const managers: Manager[] = [
   new SpawnManager(managedRoles),
-  new WorkManager(managedRoles)
+  new WorkManager(managedRoles),
+  new DefenseManager(),
 ];
 
 export const loop = ErrorMapper.wrapLoop(() => {
@@ -46,6 +48,9 @@ export const loop = ErrorMapper.wrapLoop(() => {
       const numRepairers = getByRole(RoleName.REPAIRER).length;
       const maxRepairers = (room.memory as RoomMemory).limits[RoleName.REPAIRER];
       v.text(`🔧 R: ${numRepairers}/${maxRepairers}`, 17, 21, { align: 'left' });
+
+      v.text(`⚡: ${room.energyAvailable}/${room.energyCapacityAvailable}`, 17, 22, { align: 'left' });
+
     });
 
   });

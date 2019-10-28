@@ -81,8 +81,6 @@ export class SpawnManager implements Manager {
     }
 
     public manageRoom = (room: Room): void => {
-        const limits = (room.memory as RoomMemory).limits;
-
         const spawns = room.find(FIND_MY_STRUCTURES, {
             filter: (s: AnyOwnedStructure) => {
                 return s.structureType === STRUCTURE_SPAWN && !s.spawning
@@ -90,11 +88,14 @@ export class SpawnManager implements Manager {
         }) as StructureSpawn[];
 
         if (!_.isEmpty(spawns)) {
+            const limits = (room.memory as RoomMemory).limits;
+            const tiers = (room.memory as RoomMemory).tiers;
+
             const spawner = this.attemptSpawnWorker(spawns[0]);
             this.managedRoles.forEach((role: Role) => {
                 const foundCreeps = getByRole(role.name);
                 if (foundCreeps && foundCreeps.length < limits[role.name]) {
-                    const tier: number = (room.memory as RoomMemory).tiers[role.name];
+                    const tier: number = tiers[role.name];
                     spawner(tier, role.name);
                 }
             });

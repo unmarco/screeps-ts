@@ -12,7 +12,9 @@ const work = (creep: NewCreep, pathStyle: PolyStyle) => {
     }
     const targets = creep.room.find(FIND_MY_STRUCTURES, {
         filter: (s: AnyOwnedStructure) => {
-            return (s.structureType === STRUCTURE_SPAWN || s.structureType === STRUCTURE_EXTENSION)
+            return (s.structureType === STRUCTURE_SPAWN ||
+                s.structureType === STRUCTURE_EXTENSION ||
+                s.structureType === STRUCTURE_TOWER)
                 && (s.energy < s.energyCapacity);
         }
     });
