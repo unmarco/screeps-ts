@@ -7,7 +7,6 @@ import { RoleUpgrader } from "roles/role-upgrader";
 
 import { WorkManager } from "managers/work-manager";
 import { SpawnManager } from "managers/spawn-manager";
-import { Manager, RoomMemory } from "types";
 import { getByRole, RoleName } from "roles/role-util";
 import { DefenseManager } from "managers/defense-manager";
 

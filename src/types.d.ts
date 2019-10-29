@@ -1,14 +1,17 @@
 interface Store {
+  energy: number;
   getCapacity(resource?: ResourceConstant): number;
   getFreeCapacity(resource?: ResourceConstant): number;
   getUsedCapacity(resource?: ResourceConstant): number;
 }
 
-interface Creep {
-  store: Store;
-}
+interface Creep { store: Store }
+interface StructureContainer { store: Store }
+interface StructureSpawn { store: Store }
+interface StructureExtension { store: Store }
+interface StructureTower { store: Store }
 
-// example declaration file - remove these and add your own custom typings
+
 
 interface TiersByRole {
   [roleName: string]: Tiers;
@@ -34,6 +37,10 @@ interface CreepMemory {
   tier: number;
   room: string;
   working: boolean;
+  currentTarget?: {
+    id: string;
+    pos: RoomPosition;
+  }
 }
 
 interface RoomMemory {

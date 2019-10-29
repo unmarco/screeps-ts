@@ -1,4 +1,5 @@
 import { harvestEnergy, RoleName } from "./role-util";
+import Icon from "icons";
 
 const builderPathStyle: PolyStyle = {
     stroke: '#DD9999',
@@ -6,17 +7,22 @@ const builderPathStyle: PolyStyle = {
 }
 
 const work = (creep: Creep, pathStyle: PolyStyle) => {
-    creep.say('🔨');
+    creep.say(Icon.ACTION_BUILD);
 
     const site = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
 
-    if (!_.isUndefined(site)) {
+    if (site !== null) {
+        creep.memory.currentTarget = {
+            id: site.id,
+            pos: site.pos
+        };
         if (creep.build(site as ConstructionSite) === ERR_NOT_IN_RANGE) {
             creep.moveTo((site as ConstructionSite), {
                 visualizePathStyle: pathStyle
             });
         }
     } else {
+        creep.memory.currentTarget = undefined;
         const restFlag = Game.flags['B'];
         creep.moveTo(restFlag);
     }

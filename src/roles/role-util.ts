@@ -1,12 +1,45 @@
+import Icon from "icons";
+
 export const harvestEnergy = (creep: Creep, pathStyle: PolyStyle) => {
-    creep.say('⚡');
-    // const sources: Source[] = creep.room.find(FIND_SOURCES);
-    const source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
-    if (!_.isUndefined(source)) {
-        if (creep.harvest(source!) === ERR_NOT_IN_RANGE) {
-            creep.moveTo(source!, {
-                visualizePathStyle: pathStyle
-            });
+    creep.say(Icon.ACTION_RECHARGE);
+    const containers = creep.room.find(FIND_MY_STRUCTURES, {
+        filter: (c: StructureContainer) => {
+            return c.structureType === STRUCTURE_CONTAINER &&
+                (c.store.getUsedCapacity() > 0);
+        }
+    });
+    if (containers.length > 0) {
+        containers.sort((a: AnyOwnedStructure, b: AnyOwnedStructure) => {
+            return (creep.pos.getRangeTo(b) - creep.pos.getRangeTo(a));
+        });
+        creep.memory.currentTarget = {
+            id: containers[0].id,
+            pos: containers[0].pos
+        };
+        if (creep.withdraw(containers[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+            creep.moveTo(containers[0]);
+        }
+    } else {
+        const sources: Source[] = creep.room.find(FIND_SOURCES_ACTIVE, {
+            filter: (s: Source) => {
+                return creep.pos.inRangeTo(s.pos, 20);
+            }
+        });
+        if (sources && sources.length > 0) {
+            sources.sort((a: Source, b: Source) => b.energy - a.energy);
+            if (sources[0] !== null) {
+                creep.memory.currentTarget = {
+                    id: sources[0].id,
+                    pos: sources[0].pos
+                };
+                if (creep.harvest(sources[0]) === ERR_NOT_IN_RANGE) {
+                    creep.moveTo(sources[0], {
+                        visualizePathStyle: pathStyle
+                    });
+                }
+            }
+        } else {
+            console.log('NO SOURCES');
         }
     }
 }

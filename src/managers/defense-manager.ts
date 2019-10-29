@@ -15,7 +15,7 @@ export class DefenseManager implements Manager {
 
             towers.forEach((t: AnyOwnedStructure) => {
                 const tower = t as StructureTower;
-                const wallsAndRampartsToRepair = t.pos.findInRange(FIND_STRUCTURES, 5, {
+                const wallsAndRampartsToRepair = t.pos.findInRange(FIND_STRUCTURES, 20, {
                     filter: (s: AnyStructure) => {
                         return (s.structureType === STRUCTURE_WALL && s.hits < wallHitpoints) ||
                             (s.structureType === STRUCTURE_RAMPART && s.hits < rampartHitpoints);

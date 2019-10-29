@@ -1,4 +1,5 @@
 import { harvestEnergy, RoleName } from "./role-util";
+import Icon from "icons";
 
 const repairerPathStyle: PolyStyle = {
     stroke: '#DDDD99',
@@ -6,7 +7,7 @@ const repairerPathStyle: PolyStyle = {
 }
 
 const work = (creep: Creep, pathStyle: PolyStyle) => {
-    creep.say('🔧');
+    creep.say(Icon.ACTION_REPAIR);
     const wallHitpoints = creep.room.memory.hits.walls;
     const rampartHitpoints = creep.room.memory.hits.ramparts;
     const structures = creep.room.find(FIND_STRUCTURES, {
@@ -21,12 +22,19 @@ const work = (creep: Creep, pathStyle: PolyStyle) => {
     });
 
     if (structures.length > 0) {
+        creep.say(`${Icon.ACTION_MOVE} ${structures[0].pos.x + ',' + structures[0].pos.y}`);
+        creep.room.visual.text(Icon.TARGET_REPAIRER, structures[0].pos.x, structures[0].pos.y);
+        creep.memory.currentTarget = {
+            id: structures[0].id,
+            pos: structures[0].pos
+        };
         if (creep.repair(structures[0]) === ERR_NOT_IN_RANGE) {
             creep.moveTo(structures[0], {
                 visualizePathStyle: pathStyle
             });
         }
     } else {
+        creep.memory.currentTarget = undefined;
         const restFlag = Game.flags['R'];
         creep.moveTo(restFlag);
     }

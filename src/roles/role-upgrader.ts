@@ -1,4 +1,5 @@
 import { harvestEnergy, RoleName } from "./role-util";
+import Icon from "icons";
 
 const upgraderPathStyle: PolyStyle = {
     stroke: '#9999DD',
@@ -7,7 +8,11 @@ const upgraderPathStyle: PolyStyle = {
 
 const work = (creep: Creep, pathStyle?: PolyStyle) => {
     const controller = creep.room.controller!;
-    creep.say('🔼');
+    creep.say(Icon.ACTION_UPGRADE);
+    creep.memory.currentTarget = {
+        id: controller.id,
+        pos: controller.pos
+    };
     if (creep.upgradeController(controller) === ERR_NOT_IN_RANGE) {
         creep.moveTo(controller, {
             visualizePathStyle: pathStyle
