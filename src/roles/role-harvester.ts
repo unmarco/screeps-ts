@@ -1,5 +1,4 @@
 import { harvestEnergy, RoleName } from "./role-util";
-import { posix } from "path";
 import Icon from "icons";
 
 const harvesterPathStyle: PolyStyle = {
@@ -10,8 +9,7 @@ const harvesterPathStyle: PolyStyle = {
 const work = (creep: Creep, pathStyle: PolyStyle) => {
     const primaryTargets = creep.room.find(FIND_STRUCTURES, {
         filter: (s: AnyStructure) => {
-            return (_.has(s, 'owner') && (s as AnyOwnedStructure).owner.username === 'unmarco') &&
-                (s.structureType === STRUCTURE_SPAWN && s.energy < s.energyCapacity) ||
+            return (s.structureType === STRUCTURE_SPAWN && s.energy < s.energyCapacity) ||
                 (s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity) ||
                 (s.structureType === STRUCTURE_TOWER && s.energy < s.energyCapacity)
         }
@@ -65,7 +63,7 @@ export const RoleHarvester: Role = {
     run: (creep: Creep) => {
         let working = creep.memory.working;
         if (creep.carry.energy < creep.carryCapacity && !working) {
-            harvestEnergy(creep, harvesterPathStyle);
+            harvestEnergy(creep, harvesterPathStyle, false);
         } else {
             working = true;
         }

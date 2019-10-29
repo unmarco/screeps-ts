@@ -7,7 +7,9 @@ const enum Icon {
     ACTION_TRANSFER = '🔽',
     ACTION_UPGRADE  = '🔼',
 
+    TARGET_CONTAINER = '⬛',
     TARGET_REPAIRER = '🛠',
+    TARGET_SOURCE = '🔆',
 }
 
 export default Icon;
