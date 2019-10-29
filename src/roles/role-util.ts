@@ -47,31 +47,31 @@ export const harvestEnergy = (creep: Creep, pathStyle: PolyStyle, useContainers:
     } else if (sources && sources.length > 0) {
         const withRange = isInRangeTo(1);
         const filter = withRange(creep.pos);
+        sources.forEach((s: Source) => {
+            const creepsAtSource = creep.room.find(FIND_CREEPS, { filter });
+            creep.room.visual.text(String(creepsAtSource.length), s.pos.x + 1, s.pos.y + 0.25);
+        })
 
         sources.sort((a: Source, b: Source) => {
 
             const energyA = a.energy;
             const rangeToA = creep.pos.getRangeTo(a);
-            const creepsInA = creep.room.find(FIND_CREEPS, { filter });
-            creep.room.visual.text(String(creepsInA.length), a.pos.x + 1, a.pos.y + 0.25);
-            if (Game.time % 50 === 0) {
-                console.log(`${creepsInA.length} creeps at ${a.pos.x},${a.pos.y}`);
-            }
 
             const energyB = b.energy;
             const rangeToB = creep.pos.getRangeTo(b);
-            const creepsInB = creep.room.find(FIND_CREEPS, { filter });
-            creep.room.visual.text(String(creepsInB.length), b.pos.x + 1, b.pos.y + 0.25);
-            if (Game.time % 50 === 0) {
-                console.log(`${creepsInB.length} creeps at ${b.pos.x},${b.pos.y}`);
-            }
 
-            if (energyA > energyB && rangeToA > rangeToB) {
+            if (rangeToA < rangeToB) {
+                return -1;
+            } else if (rangeToA > rangeToB) {
                 return 1;
-            } else if (energyB > energyA && rangeToA > rangeToB) {
-                return -1
             } else {
-                return 0;
+                if (energyA > energyB) {
+                    return -1;
+                } else if (energyA < energyB) {
+                    return 1;
+                } else {
+                    return 0;
+                }
             }
 
         });
