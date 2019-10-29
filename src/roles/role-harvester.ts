@@ -1,4 +1,4 @@
-import { getConfig, harvestEnergy, RoleName } from "./role-util";
+import { harvestEnergy, RoleName } from "./role-util";
 
 const harvesterPathStyle: PolyStyle = {
     stroke: '#99DD99',
@@ -6,9 +6,7 @@ const harvesterPathStyle: PolyStyle = {
 }
 
 const work = (creep: Creep, pathStyle: PolyStyle) => {
-    if (getConfig(creep.room.name).chattyCreeps) {
-        creep.say('🔽');
-    }
+    creep.say('🔽');
     const targets = creep.room.find(FIND_MY_STRUCTURES, {
         filter: (s: AnyOwnedStructure) => {
             return (s.structureType === STRUCTURE_SPAWN ||

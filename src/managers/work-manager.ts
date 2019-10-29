@@ -14,10 +14,9 @@ export class WorkManager implements Manager {
         room.find(FIND_MY_CREEPS, {
             filter: (c: Creep) => _.has(c.memory, 'role')
         }).forEach((creep: Creep) => {
-            const nCreep = creep as Creep;
             this.managedRoles.forEach((role: Role) => {
-                if ((nCreep.memory as CreepMemory).role === role.name) {
-                    role.run(nCreep);
+                if (creep.memory.role === role.name) {
+                    role.run(creep);
                 }
             });
         });

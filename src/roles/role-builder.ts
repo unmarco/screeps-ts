@@ -1,4 +1,4 @@
-import { getConfig, harvestEnergy, RoleName } from "./role-util";
+import { harvestEnergy, RoleName } from "./role-util";
 
 const builderPathStyle: PolyStyle = {
     stroke: '#DD9999',
@@ -6,9 +6,7 @@ const builderPathStyle: PolyStyle = {
 }
 
 const work = (creep: Creep, pathStyle: PolyStyle) => {
-    if (getConfig(creep.room.name).chattyCreeps) {
-        creep.say('🔨');
-    }
+    creep.say('🔨');
 
     const site = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
 

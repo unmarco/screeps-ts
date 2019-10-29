@@ -1,4 +1,4 @@
-import { getConfig, harvestEnergy, RoleName } from "./role-util";
+import { harvestEnergy, RoleName } from "./role-util";
 
 const repairerPathStyle: PolyStyle = {
     stroke: '#DDDD99',
@@ -6,11 +6,9 @@ const repairerPathStyle: PolyStyle = {
 }
 
 const work = (creep: Creep, pathStyle: PolyStyle) => {
-    if (getConfig(creep.room.name).chattyCreeps) {
-        creep.say('🔧');
-    }
-    const wallHitpoints = getConfig(creep.room.name).wallHitpoints;
-    const rampartHitpoints = getConfig(creep.room.name).rampartHitpoints;
+    creep.say('🔧');
+    const wallHitpoints = creep.room.memory.hits.walls;
+    const rampartHitpoints = creep.room.memory.hits.ramparts;
     const structures = creep.room.find(FIND_STRUCTURES, {
         filter: (s: AnyStructure) => {
             const isWall = s.structureType === STRUCTURE_WALL;

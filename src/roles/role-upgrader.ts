@@ -1,4 +1,4 @@
-import { getConfig, harvestEnergy, RoleName } from "./role-util";
+import { harvestEnergy, RoleName } from "./role-util";
 
 const upgraderPathStyle: PolyStyle = {
     stroke: '#9999DD',
@@ -7,9 +7,7 @@ const upgraderPathStyle: PolyStyle = {
 
 const work = (creep: Creep, pathStyle?: PolyStyle) => {
     const controller = creep.room.controller!;
-    if (getConfig(creep.room.name).chattyCreeps) {
-        creep.say('🔼');
-    }
+    creep.say('🔼');
     if (creep.upgradeController(controller) === ERR_NOT_IN_RANGE) {
         creep.moveTo(controller, {
             visualizePathStyle: pathStyle
