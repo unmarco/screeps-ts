@@ -8,16 +8,17 @@ const builderPathStyle: PolyStyle = {
 
 const work = (creep: Creep, pathStyle: PolyStyle) => {
     creep.say(Icon.ACTION_BUILD);
-
-    const site = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
-
-    if (site !== null) {
+    const sites = creep.room.find(FIND_MY_CONSTRUCTION_SITES);
+    if (sites && sites.length > 0) {
+        sites.sort((a: ConstructionSite, b: ConstructionSite) => {
+            return (b.progress / b.progressTotal) - (a.progress / a.progressTotal);
+        })
         creep.memory.currentTarget = {
-            id: site.id,
-            pos: site.pos
+            id: sites[0].id,
+            pos: sites[0].pos
         };
-        if (creep.build(site as ConstructionSite) === ERR_NOT_IN_RANGE) {
-            creep.moveTo((site as ConstructionSite), {
+        if (creep.build(sites[0]) === ERR_NOT_IN_RANGE) {
+            creep.moveTo(sites[0], {
                 visualizePathStyle: pathStyle
             });
         }

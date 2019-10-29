@@ -1,23 +1,33 @@
 import Icon from "icons";
 
+export const sortByDistance = _.curry(
+    <T extends RoomPosition>(pos: RoomPosition, a: T, b: T) => pos.getRangeTo(b) - pos.getRangeTo(a)
+);
+
+export const isInRangeTo = _.curry(<T extends RoomPosition>(range: number, a: T, b: T): boolean => {
+    return a.inRangeTo(b, range);
+});
+
+// ()
+
 export const harvestEnergy = (creep: Creep, pathStyle: PolyStyle, useContainers: boolean = true) => {
     const containers = creep.room.find(FIND_STRUCTURES, {
         filter: (c: AnyStructure) => {
             return c.structureType === STRUCTURE_CONTAINER &&
-            ((c as StructureContainer).store.getUsedCapacity() >= creep.store.getCapacity());
+                ((c as StructureContainer).store.getUsedCapacity() > 0);
         }
     });
 
-    const sources: Source[] = creep.room.find(FIND_SOURCES_ACTIVE, {
-        filter: (s: Source) => {
-            return creep.pos.inRangeTo(s.pos, 20);
-        }
+    const sources = creep.room.find(FIND_SOURCES_ACTIVE);
+
+    const droppedEnergy = creep.room.find(FIND_DROPPED_RESOURCES, {
+        filter: (r: Resource) => r.resourceType === RESOURCE_ENERGY
     });
+
+    const byDistance = sortByDistance(creep.pos);
 
     if (useContainers && containers.length > 0) {
-        containers.sort((a: AnyStructure, b: AnyStructure) => {
-            return (creep.pos.getRangeTo(b) - creep.pos.getRangeTo(a));
-        });
+        containers.sort(byDistance);
         creep.memory.currentTarget = {
             id: containers[0].id,
             pos: containers[0].pos
@@ -26,8 +36,45 @@ export const harvestEnergy = (creep: Creep, pathStyle: PolyStyle, useContainers:
         if (creep.withdraw(containers[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
             creep.moveTo(containers[0]);
         }
+    } else if (droppedEnergy && droppedEnergy.length > 0) {
+        creep.say(Icon.ACTION_RECHARGE + Icon.ACTION_PICKUP);
+
+        if (!creep.pos.isNearTo(droppedEnergy[0].pos)) {
+            creep.moveTo(droppedEnergy[0].pos);
+        } else {
+            creep.pickup(droppedEnergy[0]);
+        }
     } else if (sources && sources.length > 0) {
-        sources.sort((a: Source, b: Source) => b.energy - a.energy);
+        const withRange = isInRangeTo(1);
+        const filter = withRange(creep.pos);
+
+        sources.sort((a: Source, b: Source) => {
+
+            const energyA = a.energy;
+            const rangeToA = creep.pos.getRangeTo(a);
+            const creepsInA = creep.room.find(FIND_CREEPS, { filter });
+            creep.room.visual.text(String(creepsInA.length), a.pos.x + 1, a.pos.y + 0.25);
+            if (Game.time % 50 === 0) {
+                console.log(`${creepsInA.length} creeps at ${a.pos.x},${a.pos.y}`);
+            }
+
+            const energyB = b.energy;
+            const rangeToB = creep.pos.getRangeTo(b);
+            const creepsInB = creep.room.find(FIND_CREEPS, { filter });
+            creep.room.visual.text(String(creepsInB.length), b.pos.x + 1, b.pos.y + 0.25);
+            if (Game.time % 50 === 0) {
+                console.log(`${creepsInB.length} creeps at ${b.pos.x},${b.pos.y}`);
+            }
+
+            if (energyA > energyB && rangeToA > rangeToB) {
+                return 1;
+            } else if (energyB > energyA && rangeToA > rangeToB) {
+                return -1
+            } else {
+                return 0;
+            }
+
+        });
         if (sources[0] !== null) {
             creep.memory.currentTarget = {
                 id: sources[0].id,

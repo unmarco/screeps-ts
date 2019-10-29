@@ -2,6 +2,7 @@ const enum Icon {
     ACTION_BUILD    = '🔨',
     ACTION_DROP     = '⬇',
     ACTION_MOVE     = '➡',
+    ACTION_PICKUP   = '⬆',
     ACTION_RECHARGE = '⛽',
     ACTION_REPAIR   = '🔧',
     ACTION_TRANSFER = '🔽',

@@ -35,7 +35,7 @@ const BodyTier: TiersByRole = {
     repairer: {
         1: [CARRY, WORK, MOVE],
         2: [CARRY, CARRY, WORK, WORK, MOVE, MOVE],
-        3: [CARRY, CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE],
+        3: [CARRY, CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE],
         4: [CARRY, CARRY, CARRY, CARRY, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE]
     },
     upgrader: {

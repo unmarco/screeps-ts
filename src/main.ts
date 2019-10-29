@@ -9,6 +9,7 @@ import { WorkManager } from "managers/work-manager";
 import { SpawnManager } from "managers/spawn-manager";
 import { getByRole, RoleName } from "roles/role-util";
 import { DefenseManager } from "managers/defense-manager";
+import { GeneralManager } from "managers/general-maanger";
 
 const managedRoles = [
   RoleHarvester, RoleUpgrader, RoleBuilder, RoleRepairer
@@ -18,7 +19,10 @@ const managers: Manager[] = [
   new SpawnManager(managedRoles),
   new WorkManager(managedRoles),
   new DefenseManager(),
+  new GeneralManager(),
 ];
+
+console.log('------------------------ DEPLOY');
 
 export const loop = ErrorMapper.wrapLoop(() => {
 

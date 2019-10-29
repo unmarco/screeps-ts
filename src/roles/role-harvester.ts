@@ -19,7 +19,6 @@ const work = (creep: Creep, pathStyle: PolyStyle) => {
             return (s.structureType === STRUCTURE_CONTAINER && s.store.getFreeCapacity() > 0);
         }
     });
-    // console.log(`Found ${containers.length} containers`)
     if (primaryTargets.length > 0) {
         creep.say(Icon.ACTION_TRANSFER);
         creep.memory.currentTarget = {
@@ -32,11 +31,8 @@ const work = (creep: Creep, pathStyle: PolyStyle) => {
             });
         }
     } else if (containers.length > 0) {
-        console.log(`No primary targets found. Found ${containers.length} containers instead`)
-        creep.say(Icon.ACTION_DROP);
-        containers.sort((a: AnyStructure, b: AnyStructure) => {
-            return (creep.pos.getRangeTo(b) - creep.pos.getRangeTo(a));
-        })
+        // console.log(`No primary targets found. Found ${containers.length} containers instead`)
+        creep.say(Icon.ACTION_DROP + Icon.TARGET_CONTAINER);
         creep.memory.currentTarget = {
             id: containers[0].id,
             pos: containers[0].pos
