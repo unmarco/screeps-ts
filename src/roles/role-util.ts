@@ -2,14 +2,14 @@ import Icon from "icons";
 
 export const harvestEnergy = (creep: Creep, pathStyle: PolyStyle) => {
     creep.say(Icon.ACTION_RECHARGE);
-    const containers = creep.room.find(FIND_MY_STRUCTURES, {
-        filter: (c: StructureContainer) => {
+    const containers = creep.room.find(FIND_STRUCTURES, {
+        filter: (c: AnyStructure) => {
             return c.structureType === STRUCTURE_CONTAINER &&
-                (c.store.getUsedCapacity() > 0);
+                ((c as StructureContainer).store.getUsedCapacity() > 0);
         }
     });
     if (containers.length > 0) {
-        containers.sort((a: AnyOwnedStructure, b: AnyOwnedStructure) => {
+        containers.sort((a: AnyStructure, b: AnyStructure) => {
             return (creep.pos.getRangeTo(b) - creep.pos.getRangeTo(a));
         });
         creep.memory.currentTarget = {
