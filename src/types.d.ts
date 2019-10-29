@@ -1,12 +1,10 @@
-import { RoleName } from "roles/role-util";
-
 interface Store {
   getCapacity(resource?: ResourceConstant): number;
   getFreeCapacity(resource?: ResourceConstant): number;
   getUsedCapacity(resource?: ResourceConstant): number;
 }
 
-interface NewCreep extends Creep {
+interface Creep {
   store: Store;
 }
 
@@ -26,8 +24,8 @@ interface Manager {
 }
 
 interface Role {
-  name: RoleName;
-  run: (creep: NewCreep) => void;
+  name: string;
+  run: (creep: Creep) => void;
 }
 
 // Memory extension
@@ -45,6 +43,11 @@ interface RoomMemory {
 
   tiers: {
     [roleName: string]: number;
+  }
+
+  hits: {
+    walls: number;
+    ramparts: number;
   }
 }
 

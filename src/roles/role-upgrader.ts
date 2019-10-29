@@ -1,12 +1,11 @@
 import { getConfig, harvestEnergy, RoleName } from "./role-util";
-import { Role, CreepMemory, NewCreep } from "types";
 
 const upgraderPathStyle: PolyStyle = {
     stroke: '#9999DD',
     strokeWidth: 0.1,
 }
 
-const work = (creep: NewCreep, pathStyle?: PolyStyle) => {
+const work = (creep: Creep, pathStyle?: PolyStyle) => {
     const controller = creep.room.controller!;
     if (getConfig(creep.room.name).chattyCreeps) {
         creep.say('🔼');
@@ -22,8 +21,8 @@ export const RoleUpgrader: Role = {
 
     name: RoleName.UPGRADER,
 
-    run: (creep: NewCreep) => {
-        let working = (creep.memory as CreepMemory).working;
+    run: (creep: Creep) => {
+        let working = creep.memory.working;
         if (!_.isUndefined(creep.room.controller)) {
             if (creep.carry.energy < creep.carryCapacity && !working) {
                 if (creep.carry.energy < creep.carryCapacity) {
@@ -41,7 +40,7 @@ export const RoleUpgrader: Role = {
                 }
             }
 
-            (creep.memory as CreepMemory).working = working;
+            creep.memory.working = working;
         } else {
             console.log('No controller!');
         }

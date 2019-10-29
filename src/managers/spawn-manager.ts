@@ -1,5 +1,4 @@
 import { getByRole, RoleName } from "roles/role-util";
-import { Role, WorkerFlagMemory, RoomMemory, Manager, TiersByRole } from "types";
 
 /*
   CARRY 50
@@ -13,26 +12,37 @@ import { Role, WorkerFlagMemory, RoomMemory, Manager, TiersByRole } from "types"
   CLAIM 600
  */
 
+/*
+[CARRY,WORK,MOVE]
+[CARRY,CARRY,WORK,WORK,MOVE,MOVE]
+[CARRY,CARRY,CARRY,WORK,WORK,WORK,MOVE,MOVE,MOVE]
+[CARRY,CARRY,CARRY,CARRY,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,MOVE]
+*/
+
 const BodyTier: TiersByRole = {
     builder: {
         1: [CARRY, WORK, MOVE],
-        2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
-        3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
+        2: [CARRY, CARRY, WORK, WORK, MOVE, MOVE],
+        3: [CARRY, CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE],
+        4: [CARRY, CARRY, CARRY, CARRY, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE]
     },
     harvester: {
         1: [CARRY, WORK, MOVE],
-        2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
-        3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
+        2: [CARRY, CARRY, WORK, WORK, MOVE, MOVE],
+        3: [CARRY, CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE],
+        4: [CARRY, CARRY, CARRY, CARRY, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE]
     },
     repairer: {
         1: [CARRY, WORK, MOVE],
-        2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
-        3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
+        2: [CARRY, CARRY, WORK, WORK, MOVE, MOVE],
+        3: [CARRY, CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE],
+        4: [CARRY, CARRY, CARRY, CARRY, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE]
     },
     upgrader: {
         1: [CARRY, WORK, MOVE],
-        2: [CARRY, WORK, WORK, MOVE, MOVE, MOVE],
-        3: [CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE]
+        2: [CARRY, CARRY, WORK, WORK, MOVE, MOVE],
+        3: [CARRY, CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE],
+        4: [CARRY, CARRY, CARRY, CARRY, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE]
     }
 };
 
@@ -48,7 +58,7 @@ export class SpawnManager implements Manager {
         return body.reduce((cost: number, part: BodyPartConstant) => cost + BODYPART_COST[part], 0);
     }
 
-    private attemptSpawnWorker = _.curry((spawn: StructureSpawn, tier: number, roleName: RoleName) => {
+    private attemptSpawnWorker = _.curry((spawn: StructureSpawn, tier: number, roleName: string) => {
         const body = BodyTier[roleName][tier];
         const cost = this.bodyCost(body);
         if (spawn.room.energyAvailable >= cost && !spawn.spawning) {
