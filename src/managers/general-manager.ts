@@ -36,6 +36,11 @@ export class GeneralManager implements Manager {
             console.log(`GeneralManager: Setting default hits for room ${room.name}`)
             room.memory.hits = defaultRoomMemory.hits;
         }
+
+        room.find(FIND_SOURCES).forEach((s: Source) => {
+            const creepsAtSource = room.find(FIND_CREEPS, { filter: (c: Creep) => c.pos.inRangeTo(s, 1) });
+            room.visual.text(String(creepsAtSource.length), s.pos.x + 1, s.pos.y + 0.25);
+        });
     }
 
 }

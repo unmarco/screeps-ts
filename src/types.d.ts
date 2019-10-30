@@ -76,8 +76,10 @@ interface Memory {
 }
 
 // `global` extension samples
-// declare namespace NodeJS {
-//   interface Global {
-//     log: any;
-//   }
-// }
+declare namespace NodeJS {
+  interface Global {
+    bodyCost(body: BodyPartConstant[]): number;
+    setLimit(roomName: string, roleName: string, limit: number): void;
+    spawnWorker(roomName: string, spawnName: string, roleName: string, tier: number): void;
+  }
+}

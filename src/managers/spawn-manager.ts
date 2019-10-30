@@ -19,7 +19,7 @@ import { getByRole, RoleName } from "roles/role-util";
 [CARRY,CARRY,CARRY,CARRY,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,MOVE]
 */
 
-const BodyTier: TiersByRole = {
+export const BodyTier: TiersByRole = {
     builder: {
         1: [CARRY, WORK, MOVE],
         2: [CARRY, CARRY, WORK, WORK, MOVE, MOVE],
@@ -54,13 +54,9 @@ export class SpawnManager implements Manager {
         this.managedRoles = roles;
     }
 
-    private bodyCost = (body: BodyPartConstant[]): number => {
-        return body.reduce((cost: number, part: BodyPartConstant) => cost + BODYPART_COST[part], 0);
-    }
-
     private attemptSpawnWorker = _.curry((spawn: StructureSpawn, tier: number, roleName: string) => {
         const body = BodyTier[roleName][tier];
-        const cost = this.bodyCost(body);
+        const cost = global.bodyCost(body);
         if (spawn.room.energyAvailable >= cost && !spawn.spawning) {
             console.log(`New Creep [Room: ${spawn.room.name}, Spawn: ${spawn.name}, Role: ${roleName}, Tier: ${tier}]`);
             spawn.spawnCreep(body, roleName + Game.time, {
@@ -98,8 +94,8 @@ export class SpawnManager implements Manager {
         }) as StructureSpawn[];
 
         if (!_.isEmpty(spawns)) {
-            const limits = (room.memory as RoomMemory).limits;
-            const tiers = (room.memory as RoomMemory).tiers;
+            const limits = room.memory.limits;
+            const tiers = room.memory.tiers;
 
             const spawner = this.attemptSpawnWorker(spawns[0]);
             this.managedRoles.forEach((role: Role) => {

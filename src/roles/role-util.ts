@@ -45,12 +45,12 @@ export const harvestEnergy = (creep: Creep, pathStyle: PolyStyle, useContainers:
             creep.pickup(droppedEnergy[0]);
         }
     } else if (sources && sources.length > 0) {
-        const withRange = isInRangeTo(1);
-        const filter = withRange(creep.pos);
-        sources.forEach((s: Source) => {
-            const creepsAtSource = creep.room.find(FIND_CREEPS, { filter });
-            creep.room.visual.text(String(creepsAtSource.length), s.pos.x + 1, s.pos.y + 0.25);
-        })
+        // const withRange = isInRangeTo(1);
+        // const filter = withRange(creep.pos);
+        // sources.forEach((s: Source) => {
+        //     const creepsAtSource = creep.room.find(FIND_CREEPS, { filter });
+        //     creep.room.visual.text(String(creepsAtSource.length), s.pos.x + 1, s.pos.y + 0.25);
+        // })
 
         sources.sort((a: Source, b: Source) => {
 
