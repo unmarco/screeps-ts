@@ -9,7 +9,7 @@ import { WorkManager } from "managers/work-manager";
 import { SpawnManager } from "managers/spawn-manager";
 import { getByRole, RoleName } from "roles/role-util";
 import { DefenseManager } from "managers/defense-manager";
-import { GeneralManager } from "managers/general-maanger";
+import { GeneralManager } from "managers/general-manager";
 
 const managedRoles = [
   RoleHarvester, RoleUpgrader, RoleBuilder, RoleRepairer
