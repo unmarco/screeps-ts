@@ -1,4 +1,7 @@
 export class DefenseManager implements Manager {
+
+    public name = "DefenseManager";
+
     public doBefore(): void {
         // DO NOTHING
     }

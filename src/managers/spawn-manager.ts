@@ -48,13 +48,16 @@ export const BodyTier: TiersByRole = {
 
 export class SpawnManager implements Manager {
 
+    public name = "SpawnManager";
+
     private managedRoles: RoleDefinition[];
 
     constructor(roles: RoleDefinition[]) {
         this.managedRoles = roles;
     }
 
-    private attemptSpawnWorker = _.curry((spawn: StructureSpawn, tier: number, roleName: string) => {
+    private attemptSpawnWorker = _.curry((spawn: StructureSpawn, tier: number, roleName: string): boolean => {
+        // console.log(`Attempting to spawn a ${roleName}, tier ${tier}`);
         const body = BodyTier[roleName][tier];
         const cost = global.bodyCost(body);
         if (spawn.room.energyAvailable >= cost && !spawn.spawning) {
@@ -67,8 +70,9 @@ export class SpawnManager implements Manager {
                     working: false
                 }
             });
+            return true;
         }
-
+        return false;
     });
 
     /**
@@ -87,6 +91,10 @@ export class SpawnManager implements Manager {
     }
 
     public manageRoom = (room: Room): void => {
+        const priorities = room.memory.priorities;
+        this.managedRoles.sort((a: RoleDefinition, b: RoleDefinition) => {
+            return priorities[b.name] - priorities[a.name];
+        });
         const spawns = room.find(FIND_MY_STRUCTURES, {
             filter: (s: AnyOwnedStructure) => {
                 return s.structureType === STRUCTURE_SPAWN && !s.spawning
@@ -98,35 +106,42 @@ export class SpawnManager implements Manager {
             const tiers = room.memory.tiers;
 
             const spawner = this.attemptSpawnWorker(spawns[0]);
-            this.managedRoles.forEach((role: RoleDefinition) => {
+            for (const role of this.managedRoles) {
                 const foundCreeps = getByRole(role.name);
-                if (foundCreeps && foundCreeps.length < limits[role.name]) {
+                // console.log(`Maybe spawn a ${role.name}`);
+                if (foundCreeps.length < limits[role.name]) {
                     const tier: number = tiers[role.name];
-                    spawner(tier, role.name);
+                    const result = spawner(tier, role.name);
+                    if (result) {
+                        // console.log(`Yep, a ${role.name}`);
+                        break;
+                    }
+                } else {
+                    // console.log(`Nope, not a ${role.name}`);
                 }
-            });
+            }
+        } else {
+            // console.log('No spawns');
         }
     }
 
     public updateUI(room: Room) {
         const v = new RoomVisual(room.name);
 
-        const numHarvesters = getByRole(RoleName.HARVESTER).length;
-        const maxHarvesters = (room.memory as RoomMemory).limits[RoleName.HARVESTER];
-        v.text(`⚡ H: ${numHarvesters}/${maxHarvesters}`, 17, 18, { align: 'left' });
+        const priorities = room.memory.priorities;
+        this.managedRoles.sort((a: RoleDefinition, b: RoleDefinition) => {
+            return priorities[b.name] - priorities[a.name];
+        });
 
-        const numUpgraders = getByRole(RoleName.UPGRADER).length;
-        const maxUpgraders = (room.memory as RoomMemory).limits[RoleName.UPGRADER];
-        v.text(`🔼 U: ${numUpgraders}/${maxUpgraders}`, 17, 19, { align: 'left' });
+        let startY = 18;
 
-        const numBuilders = getByRole(RoleName.BUILDER).length;
-        const maxBuilders = (room.memory as RoomMemory).limits[RoleName.BUILDER];
-        v.text(`🔨 B: ${numBuilders}/${maxBuilders}`, 17, 20, { align: 'left' });
+        for (const roleName in priorities) {
+            const num = getByRole(roleName).length;
+            const tier = room.memory.tiers[roleName];
+            const max = room.memory.limits[roleName];
+            v.text(`${roleName}s: T${tier} ${num}/${max}`, 12, startY++, { align: 'right' });
+        }
 
-        const numRepairers = getByRole(RoleName.REPAIRER).length;
-        const maxRepairers = (room.memory as RoomMemory).limits[RoleName.REPAIRER];
-        v.text(`🔧 R: ${numRepairers}/${maxRepairers}`, 17, 21, { align: 'left' });
-
-        v.text(`⚡: ${room.energyAvailable}/${room.energyCapacityAvailable}`, 17, 22, { align: 'left' });
+        v.text(`⚡: ${room.energyAvailable}/${room.energyCapacityAvailable}`, 12, startY, { align: 'right' });
     }
 }

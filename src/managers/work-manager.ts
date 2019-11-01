@@ -3,6 +3,8 @@ import { BaseRole } from "roles/base-role";
 
 export class WorkManager implements Manager {
 
+    public name = "WorkManager";
+
     private managedRoles: RoleDefinition[];
 
     constructor(roles: RoleDefinition[]) {

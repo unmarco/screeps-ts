@@ -73,7 +73,11 @@ export class HarvesterRole extends BaseRole {
             // console.log(`No targets of any type found. Resting at flag`)
             creep.memory.currentTarget = undefined;
             const restFlag = Game.flags['H'];
-            creep.moveTo(restFlag);
+            if (!creep.pos.isNearTo(restFlag)) {
+                creep.moveTo(restFlag);
+            } else {
+                // creep.drop(RESOURCE_ENERGY);
+            }
         }
     }
 }

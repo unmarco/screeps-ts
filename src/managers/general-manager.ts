@@ -5,11 +5,18 @@ const defaultRoomMemory: RoomMemory = {
     sites: [],
     repairTargets: [],
     droplets: [],
+    defenses: [],
     limits: {
-        harvesters: 2,
-        upgraders: 2,
-        builders: 1,
-        repairers: 0
+        harvester: 2,
+        upgrader: 2,
+        builder: 1,
+        repairer: 0
+    },
+    priorities: {
+        harvester: 3,
+        upgrader: 2,
+        builder: 1,
+        repairer: 0
     },
     tiers: {
         harvester: 1,
@@ -24,6 +31,8 @@ const defaultRoomMemory: RoomMemory = {
 };
 
 export class GeneralManager implements Manager {
+
+    public name = "GeneralManager";
 
     public doBefore(): void {
         // DO NOTHING
@@ -54,7 +63,7 @@ export class GeneralManager implements Manager {
 
     private initDropletsMemory(room: Room) {
         const droplets = room.find(FIND_DROPPED_RESOURCES).map((d: Resource) => {
-            const droplet: DropletData = {
+            const droplet: DroppedResourceData = {
                 id: d.id,
                 pos: d.pos,
                 resource: d.resourceType,
@@ -62,7 +71,7 @@ export class GeneralManager implements Manager {
             }
             return droplet;
         });
-        droplets.sort((a: DropletData, b: DropletData) => a.amount - b.amount);
+        droplets.sort((a: DroppedResourceData, b: DroppedResourceData) => a.amount - b.amount);
         room.memory.droplets = droplets;
     }
 
@@ -109,6 +118,7 @@ export class GeneralManager implements Manager {
         const sites = room.find(FIND_MY_CONSTRUCTION_SITES).map((s: ConstructionSite) => {
             const site: ConstructionSiteData = {
                 id: s.id,
+                type: s.structureType,
                 pos: s.pos,
                 progress: s.progress,
                 progressTotal: s.progressTotal,
@@ -135,6 +145,7 @@ export class GeneralManager implements Manager {
         }).map((s: AnyStructure) => {
             const repairTarget: ReparirTargetData  = {
                 id: s.id,
+                type: s.structureType,
                 pos: s.pos,
                 hits: s.hits,
                 hitsMax: s.hitsMax,
@@ -150,6 +161,10 @@ export class GeneralManager implements Manager {
         if (room.memory.limits === undefined) {
             console.log(`GeneralManager: Setting default limits for room ${room.name}`)
             room.memory.limits = defaultRoomMemory.limits;
+        }
+        if (room.memory.priorities === undefined) {
+            console.log(`GeneralManager: Setting default priorities for room ${room.name}`)
+            room.memory.priorities = defaultRoomMemory.priorities;
         }
         if (room.memory.tiers === undefined) {
             console.log(`GeneralManager: Setting default tiers for room ${room.name}`)
@@ -172,9 +187,7 @@ export class GeneralManager implements Manager {
     }
 
     public manageRoom(room: Room): void {
-        if (Game.time % 10 === 0) {
-            this.initMemory(room);
-        }
+        this.initMemory(room);
     }
 
     public updateUI(room: Room) {

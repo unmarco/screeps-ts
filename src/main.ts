@@ -21,6 +21,7 @@ const managedRoles: RoleDefinition[] = [
   new RepairerRole()
 ];
 
+
 const managers: Manager[] = [
   new GeneralManager(),
   new SpawnManager(managedRoles),
@@ -31,11 +32,14 @@ const managers: Manager[] = [
 
 export const loop = ErrorMapper.wrapLoop(() => {
 
+
+
   managers.forEach((manager: Manager) => {
 
     manager.doBefore();
 
     _.forEach(Game.rooms, (room: Room) => {
+      // console.log(`Calling the ${manager.name}`);
       manager.manageRoom(room);
       manager.updateUI(room);
     });

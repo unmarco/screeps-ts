@@ -22,6 +22,7 @@ interface Tiers {
 }
 
 interface Manager {
+  name: string;
   doBefore(): void;
   manageRoom(room: Room): void;
   updateUI(room: Room): void;
@@ -47,7 +48,15 @@ interface CreepMemory {
 
 interface StructureData {
   id: string;
+  type: StructureConstant;
   pos: RoomPosition;
+}
+
+interface DroppedResourceData {
+  id: string;
+  resource: ResourceConstant;
+  pos: RoomPosition;
+  amount: number;
 }
 
 interface ResourceStore {
@@ -57,12 +66,13 @@ interface ResourceStore {
 }
 
 interface ResourceStorageStructure extends StructureData {
-  type: STRUCTURE_CONTAINER | STRUCTURE_STORAGE;
   resource: ResourceConstant;
   store: ResourceStore;
 }
 
-interface SourceData extends StructureData {
+interface SourceData {
+  id: string;
+  pos: RoomPosition;
   active: boolean;
   resource: ResourceConstant;
   available: number;
@@ -86,9 +96,10 @@ interface ReparirTargetData extends StructureData {
   ratio: number;
 }
 
-interface DropletData extends StructureData {
-  resource: ResourceConstant;
-  amount: number;
+interface DefenseStructureData extends StructureData {
+  hits: number;
+  hitsMax: number;
+  ratio: number;
 }
 
 interface RoomMemory {
@@ -97,11 +108,17 @@ interface RoomMemory {
   storages: ResourceStorageStructure[];
   sites: ConstructionSiteData[];
   repairTargets: ReparirTargetData[];
-  droplets: DropletData[];
+  droplets: DroppedResourceData[];
+
+  defenses: DefenseStructureData[];
 
   limits: {
     [roleName: string]: number;
   };
+
+  priorities: {
+    [roleName: string]: number;
+  }
 
   tiers: {
     [roleName: string]: number;
