@@ -50,6 +50,7 @@ interface StructureData {
   id: string;
   type: StructureConstant;
   pos: RoomPosition;
+  my: boolean;
 }
 
 interface DroppedResourceData {
@@ -103,6 +104,7 @@ interface DefenseStructureData extends StructureData {
 }
 
 interface RoomMemory {
+  structures: StructureData[];
   sources: SourceData[];
   sinks: SinkData[];
   storages: ResourceStorageStructure[];

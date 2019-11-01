@@ -1,4 +1,5 @@
 const defaultRoomMemory: RoomMemory = {
+    structures: [],
     sources: [],
     sinks: [],
     storages: [],
@@ -38,26 +39,39 @@ export class GeneralManager implements Manager {
         // DO NOTHING
     }
 
-    private initStoragesMemory(room: Room) {
-        const storages = room.find<StructureStorage | StructureContainer>(FIND_STRUCTURES, {
-            filter: struct => {
-                return (struct.structureType === STRUCTURE_STORAGE || struct.structureType === STRUCTURE_CONTAINER);
-            }
-        }).map((struct: StructureStorage | StructureContainer) => {
-            const res = RESOURCE_ENERGY;
-            const data: ResourceStorageStructure = {
-                id: struct.id,
-                pos: struct.pos,
-                type: struct.structureType,
-                resource: res,
-                store: {
-                    capacity: struct.storeCapacity,
-                    used: struct.store[res],
-                    free: struct.storeCapacity - struct.store[res]
-                }
+    private initStructuresMemory(room: Room) {
+        const structures = room.find<AnyStructure>(FIND_STRUCTURES, {
+            filter: s => s.structureType !== STRUCTURE_ROAD
+        }).map((s: AnyStructure) => {
+            const structure: StructureData = {
+                id: s.id,
+                type: s.structureType,
+                pos: s.pos,
+                my: s instanceof OwnedStructure ? s.my : false,
             };
-            return data;
+            return structure;
         });
+        room.memory.structures = structures;
+    }
+
+    private initStoragesMemory(room: Room) {
+        const storages = _.filter(room.memory.structures, (s: StructureData) => s.type === STRUCTURE_CONTAINER)
+            .map((sd: StructureData) => {
+                const struct = Game.getObjectById(sd.id) as StructureContainer;
+                const storageStructure: ResourceStorageStructure = {
+                    id: struct.id,
+                    pos: struct.pos,
+                    type: struct.structureType,
+                    resource: RESOURCE_ENERGY,
+                    my: sd.my,
+                    store: {
+                        capacity: struct.storeCapacity,
+                        used: struct.store[RESOURCE_ENERGY],
+                        free: struct.storeCapacity - struct.store[RESOURCE_ENERGY]
+                    }
+                };
+                return storageStructure;
+            });
         room.memory.storages = storages;
     }
 
@@ -89,6 +103,7 @@ export class GeneralManager implements Manager {
             const sink: SinkData = {
                 id: s.id,
                 pos: s.pos,
+                my: s instanceof OwnedStructure ? s.my : false,
                 type: s.structureType,
                 resource: RESOURCE_ENERGY,
                 store: { capacity, used, free }
@@ -119,6 +134,7 @@ export class GeneralManager implements Manager {
             const site: ConstructionSiteData = {
                 id: s.id,
                 type: s.structureType,
+                my: true,
                 pos: s.pos,
                 progress: s.progress,
                 progressTotal: s.progressTotal,
@@ -143,9 +159,10 @@ export class GeneralManager implements Manager {
                     (!isWallOrRampart && s.hits < s.hitsMax);
             }
         }).map((s: AnyStructure) => {
-            const repairTarget: ReparirTargetData  = {
+            const repairTarget: ReparirTargetData = {
                 id: s.id,
                 type: s.structureType,
+                my: ('owner' in s) ? (room.controller !== undefined && s.owner === room.controller.owner) : false,
                 pos: s.pos,
                 hits: s.hits,
                 hitsMax: s.hitsMax,
@@ -177,6 +194,7 @@ export class GeneralManager implements Manager {
     }
 
     public initMemory(room: Room) {
+        this.initStructuresMemory(room);
         this.initLimitsAndTiers(room);
         this.initSourcesMemory(room);
         this.initStoragesMemory(room);
