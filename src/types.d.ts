@@ -49,7 +49,7 @@ interface StructureData {
   pos: RoomPosition;
 }
 
-interface ResourceStorageStore {
+interface ResourceStore {
   capacity: number;
   used: number;
   free: number;
@@ -58,7 +58,7 @@ interface ResourceStorageStore {
 interface ResourceStorageStructure extends StructureData {
   type: STRUCTURE_CONTAINER | STRUCTURE_STORAGE;
   resource: ResourceConstant;
-  store: ResourceStorageStore;
+  store: ResourceStore;
 }
 
 interface SourceData extends StructureData {
@@ -67,8 +67,15 @@ interface SourceData extends StructureData {
   available: number;
 }
 
+interface SinkData extends StructureData {
+  type: StructureConstant;
+  resource: ResourceConstant;
+  store: ResourceStore;
+}
+
 interface RoomMemory {
   sources?: SourceData[];
+  sinks?: SinkData[];
   storages?: ResourceStorageStructure[];
 
   limits: {

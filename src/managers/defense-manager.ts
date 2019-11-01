@@ -36,9 +36,7 @@ export class DefenseManager implements Manager {
         }
     }
 
-    public updateUI() {
+    public updateUI(room: Room) {
         // DO NOTHING
     }
-
-
 }

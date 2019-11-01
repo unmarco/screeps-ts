@@ -22,7 +22,7 @@ export class WorkManager implements Manager {
         });
     }
 
-    public updateUI() {
+    public updateUI(room: Room) {
         // DO NOTHING
     }
 }
