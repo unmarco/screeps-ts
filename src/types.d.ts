@@ -43,7 +43,6 @@ interface CreepMemory {
     id: string;
     pos: RoomPosition;
   };
-  data?: any;
 }
 
 interface StructureData {

@@ -17,18 +17,22 @@ export class WorkManager implements Manager {
         if (!room.memory.sinks || !room.memory.storages) {
             return;
         }
-        this.managedRoles.forEach((r: RoleDefinition) => {
-            if (r.name === RoleName.HARVESTER) {
-                const primaryTargets = _.filter(room.memory.sinks!, (s: SinkData) => s.store.free > 0).map((s: SinkData) => {
-                    return Game.getObjectById(s.id) as AnyStructure;
-                });
-                const storageStructures = _.filter(room.memory.storages!, (s: ResourceStorageStructure) => s.store.free > 0).map((s: SinkData) => {
-                    return Game.getObjectById(s.id) as AnyStructure;
-                });
-                r.config({
-                    primaryTarget: primaryTargets[0],
-                    storageStructure: storageStructures[0]
-                });
+        this.managedRoles.forEach((role: RoleDefinition) => {
+            switch (role.name) {
+                case RoleName.HARVESTER:
+                    const primarySinks = _.filter(room.memory.sinks!, (s: SinkData) => s.store.free > 0).map((s: SinkData) => {
+                        return Game.getObjectById(s.id) as AnyStructure;
+                    });
+                    const secondarySinks = _.filter(room.memory.storages!, (s: ResourceStorageStructure) => s.store.free > 0)
+                        .map((s: SinkData) => {
+                            return Game.getObjectById(s.id) as AnyStructure;
+                        });
+                    role.config({
+                        primarySink: primarySinks[0],
+                        secondarySink: secondarySinks[0]
+                    });
+
+                default: // DO NOTHING (for now)
             }
         });
 
