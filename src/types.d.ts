@@ -43,7 +43,33 @@ interface CreepMemory {
   }
 }
 
+interface StructureData {
+  id: string;
+  pos: RoomPosition;
+}
+
+interface ResourceStorageStore {
+  capacity: number;
+  used: number;
+  free: number;
+}
+
+interface ResourceStorageStructure extends StructureData {
+  type: STRUCTURE_CONTAINER | STRUCTURE_STORAGE;
+  resource: ResourceConstant;
+  store: ResourceStorageStore;
+}
+
+interface SourceData extends StructureData {
+  active: boolean;
+  resource: ResourceConstant;
+  available: number;
+}
+
 interface RoomMemory {
+  sources?: SourceData[];
+  storages?: ResourceStorageStructure[];
+
   limits: {
     [roleName: string]: number;
   };

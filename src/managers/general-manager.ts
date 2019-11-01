@@ -23,7 +23,47 @@ export class GeneralManager implements Manager {
         // throw new Error("Method not implemented.");
     }
 
-    public manageRoom(room: Room): void {
+    private initStoragesMemory(room: Room) {
+        // if (room.memory.storages === undefined) {
+            const storages = room.find<StructureStorage | StructureContainer>(FIND_STRUCTURES, {
+                filter: struct => {
+                    return (struct.structureType === STRUCTURE_STORAGE || struct.structureType === STRUCTURE_CONTAINER);
+                }
+            }).map((struct: StructureStorage | StructureContainer) => {
+                const res = RESOURCE_ENERGY;
+                const data: ResourceStorageStructure = {
+                    id: struct.id,
+                    pos: struct.pos,
+                    type: struct.structureType,
+                    resource: res,
+                    store: {
+                        capacity: struct.storeCapacity,
+                        used: struct.store[res],
+                        free: struct.storeCapacity - struct.store[res]
+                    }
+                };
+                return data;
+            })
+            room.memory.storages = storages;
+        // }
+    }
+
+    private initSourcesMemory(room: Room) {
+        const sources = room.find(FIND_SOURCES)
+            .map((s: Source) => {
+                const data: SourceData = {
+                    id: s.id,
+                    pos: s.pos,
+                    resource: RESOURCE_ENERGY,
+                    active: s.energy > 0,
+                    available: s.energy
+                }
+                return data;
+            });
+        room.memory.sources = sources;
+    }
+
+    private initLimitsAndTiers(room: Room) {
         if (room.memory.limits === undefined) {
             console.log(`GeneralManager: Setting default limits for room ${room.name}`)
             room.memory.limits = defaultRoomMemory.limits;
@@ -36,11 +76,16 @@ export class GeneralManager implements Manager {
             console.log(`GeneralManager: Setting default hits for room ${room.name}`)
             room.memory.hits = defaultRoomMemory.hits;
         }
+    }
 
-        room.find(FIND_SOURCES).forEach((s: Source) => {
-            const creepsAtSource = room.find(FIND_CREEPS, { filter: (c: Creep) => c.pos.inRangeTo(s, 1) });
-            room.visual.text(String(creepsAtSource.length), s.pos.x + 1, s.pos.y + 0.25);
-        });
+    public initMemory(room: Room) {
+        this.initLimitsAndTiers(room);
+        this.initSourcesMemory(room);
+        this.initStoragesMemory(room);
+    }
+
+    public manageRoom(room: Room): void {
+        this.initMemory(room);
     }
 
 }
