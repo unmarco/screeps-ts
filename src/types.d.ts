@@ -74,10 +74,17 @@ interface SinkData extends StructureData {
   store: ResourceStore;
 }
 
+interface ConstructionSiteData extends StructureData {
+  progress: number;
+  progressTotal: number;
+  ratio: number;
+}
+
 interface RoomMemory {
-  sources?: SourceData[];
-  sinks?: SinkData[];
-  storages?: ResourceStorageStructure[];
+  sources: SourceData[];
+  sinks: SinkData[];
+  storages: ResourceStorageStructure[];
+  sites: ConstructionSiteData[];
 
   limits: {
     [roleName: string]: number;

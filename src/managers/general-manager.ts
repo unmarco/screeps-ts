@@ -1,4 +1,8 @@
 const defaultRoomMemory: RoomMemory = {
+    sources: [],
+    sinks: [],
+    storages: [],
+    sites: [],
     limits: {
         harvesters: 2,
         upgraders: 2,
@@ -85,6 +89,21 @@ export class GeneralManager implements Manager {
         room.memory.sources = sources;
     }
 
+    private initConstructionSitesMemory(room: Room) {
+        const sites = room.find(FIND_MY_CONSTRUCTION_SITES).map((s: ConstructionSite) => {
+            const site: ConstructionSiteData = {
+                id: s.id,
+                pos: s.pos,
+                progress: s.progress,
+                progressTotal: s.progressTotal,
+                ratio: s.progress / s.progressTotal
+            }
+            return site;
+        });
+        sites.sort((a: ConstructionSiteData, b: ConstructionSiteData) => b.ratio - a.ratio);
+        room.memory.sites = sites;
+    }
+
     private initLimitsAndTiers(room: Room) {
         if (room.memory.limits === undefined) {
             console.log(`GeneralManager: Setting default limits for room ${room.name}`)
@@ -105,6 +124,7 @@ export class GeneralManager implements Manager {
         this.initSourcesMemory(room);
         this.initStoragesMemory(room);
         this.initSinksMemory(room);
+        this.initConstructionSitesMemory(room);
     }
 
     public manageRoom(room: Room): void {
