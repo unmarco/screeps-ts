@@ -1,69 +1,29 @@
 import { harvestEnergy, RoleName } from "./role-util";
 import Icon from "icons";
+import { BaseRole } from "./base-role";
 
 const harvesterPathStyle: PolyStyle = {
     stroke: '#99DD99',
     strokeWidth: 0.1,
 }
 
-const work = (creep: Creep, pathStyle: PolyStyle) => {
-    const primaryTargets = creep.room.find(FIND_STRUCTURES, {
-        filter: (s: AnyStructure) => {
-            return (s.structureType === STRUCTURE_SPAWN && s.energy < s.energyCapacity) ||
-                (s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity) ||
-                (s.structureType === STRUCTURE_TOWER && s.energy < s.energyCapacity)
-        }
-    });
-    const storageStructures = creep.room.find(FIND_STRUCTURES, {
-        filter: (s: AnyStructure) => {
-            return (
-                (s.structureType === STRUCTURE_CONTAINER || s.structureType === STRUCTURE_STORAGE) &&
-                (s.storeCapacity - s.store.energy) > 0
-            );
-        }
-    });
-    if (primaryTargets.length > 0) {
-        creep.say(Icon.ACTION_TRANSFER);
-        creep.memory.currentTarget = {
-            id: primaryTargets[0].id,
-            pos: primaryTargets[0].pos
-        };
-        if (creep.transfer(primaryTargets[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-            creep.moveTo(primaryTargets[0], {
-                visualizePathStyle: pathStyle
-            });
-        }
-    } else if (storageStructures.length > 0) {
-        // console.log(`No primary targets found. Found ${containers.length} containers instead`)
-        creep.say(Icon.ACTION_DROP + Icon.TARGET_CONTAINER);
-        creep.memory.currentTarget = {
-            id: storageStructures[0].id,
-            pos: storageStructures[0].pos
-        };
-        if (!creep.pos.isEqualTo(storageStructures[0])) {
-            creep.moveTo(storageStructures[0]);
-        } else {
-            console.log(`Feeding container at ${storageStructures[0].pos.x + ',' + storageStructures[0].pos.y}`)
-            if (storageStructures[0] instanceof StructureContainer || storageStructures[0] instanceof StructureStorage) {
-                // @ts-ignore
-                const missing = storageStructures[0].storeCapacity - storageStructures[0].store.energy;
-                creep.drop(RESOURCE_ENERGY, Math.min(missing, creep.carry.energy));
-            }
-        }
-    } else {
-        creep.say(Icon.ACTION_REST);
-        // console.log(`No targets of any type found. Resting at flag`)
-        creep.memory.currentTarget = undefined;
-        const restFlag = Game.flags['H'];
-        creep.moveTo(restFlag);
+type PrimaryTargetType = StructureSpawn | StructureExtension | StructureTower;
+type StorageStructureType = StructureStorage | StructureContainer;
+
+export class HarvesterRole extends BaseRole {
+    public primaryTarget: PrimaryTargetType | null = null;
+    public storageStructure: StorageStructureType | null = null;
+
+    constructor() {
+        super(RoleName.HARVESTER);
     }
-}
 
-export const RoleHarvester: Role = {
+    public config(data?: any) {
+        this.primaryTarget = data.primaryTarget || null;
+        this.storageStructure = data.storageStructure || null;
+    }
 
-    name: RoleName.HARVESTER,
-
-    run: (creep: Creep) => {
+    public run(creep: Creep) {
         let working = creep.memory.working;
         if (creep.carry.energy < creep.carryCapacity && !working) {
             harvestEnergy(creep, harvesterPathStyle, false);
@@ -73,12 +33,51 @@ export const RoleHarvester: Role = {
 
         if (working) {
             if (creep.carry.energy > 0) {
-                work(creep, harvesterPathStyle);
+                this.work(creep, harvesterPathStyle);
             } else {
                 working = false;
             }
         }
 
         creep.memory.working = working;
+    }
+
+    public work(creep: Creep, pathStyle: PolyStyle) {
+        if (creep.memory.data) {
+            if (this.primaryTarget !== null) {
+                creep.say(Icon.ACTION_TRANSFER);
+                creep.memory.currentTarget = {
+                    id: this.primaryTarget.id,
+                    pos: this.primaryTarget.pos
+                };
+                if (creep.transfer(this.primaryTarget, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+                    creep.moveTo(this.primaryTarget, {
+                        visualizePathStyle: pathStyle
+                    });
+                }
+            } else if (this.storageStructure !== null) {
+                // console.log(`No primary targets found. Found ${containers.length} containers instead`)
+                creep.say(Icon.ACTION_DROP + Icon.TARGET_CONTAINER);
+                creep.memory.currentTarget = {
+                    id: this.storageStructure.id,
+                    pos: this.storageStructure.pos
+                };
+                if (!creep.pos.isEqualTo(this.storageStructure)) {
+                    creep.moveTo(this.storageStructure);
+                } else {
+                    // console.log(`Feeding container at ${this.storageStructures[0].pos.x + ',' + this.storageStructures[0].pos.y}`)
+                    const missing = this.storageStructure.storeCapacity - this.storageStructure.store.energy;
+                    creep.drop(RESOURCE_ENERGY, Math.min(missing, creep.carry.energy));
+                }
+            } else {
+                creep.say(Icon.ACTION_REST);
+                // console.log(`No targets of any type found. Resting at flag`)
+                creep.memory.currentTarget = undefined;
+                const restFlag = Game.flags['H'];
+                creep.moveTo(restFlag);
+            }
+        } else {
+            console.log('NO DATA');
+        }
     }
 }

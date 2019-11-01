@@ -48,9 +48,9 @@ export const BodyTier: TiersByRole = {
 
 export class SpawnManager implements Manager {
 
-    private managedRoles: Role[];
+    private managedRoles: RoleDefinition[];
 
-    constructor(roles: Role[]) {
+    constructor(roles: RoleDefinition[]) {
         this.managedRoles = roles;
     }
 
@@ -98,7 +98,7 @@ export class SpawnManager implements Manager {
             const tiers = room.memory.tiers;
 
             const spawner = this.attemptSpawnWorker(spawns[0]);
-            this.managedRoles.forEach((role: Role) => {
+            this.managedRoles.forEach((role: RoleDefinition) => {
                 const foundCreeps = getByRole(role.name);
                 if (foundCreeps && foundCreeps.length < limits[role.name]) {
                     const tier: number = tiers[role.name];

@@ -27,8 +27,9 @@ interface Manager {
   updateUI(room: Room): void;
 }
 
-interface Role {
+interface RoleDefinition {
   name: string;
+  config: (data?: any) => void;
   run: (creep: Creep) => void;
 }
 
@@ -41,7 +42,8 @@ interface CreepMemory {
   currentTarget?: {
     id: string;
     pos: RoomPosition;
-  }
+  };
+  data?: any;
 }
 
 interface StructureData {

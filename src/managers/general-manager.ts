@@ -108,7 +108,9 @@ export class GeneralManager implements Manager {
     }
 
     public manageRoom(room: Room): void {
-        this.initMemory(room);
+        if (Game.time % 10 === 0) {
+            this.initMemory(room);
+        }
     }
 
     public updateUI(room: Room) {
