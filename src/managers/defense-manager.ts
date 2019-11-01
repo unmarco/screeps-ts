@@ -36,5 +36,9 @@ export class DefenseManager implements Manager {
         }
     }
 
+    public updateUI() {
+        // DO NOTHING
+    }
+
 
 }

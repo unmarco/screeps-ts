@@ -21,4 +21,8 @@ export class WorkManager implements Manager {
             });
         });
     }
+
+    public updateUI() {
+        // DO NOTHING
+    }
 }

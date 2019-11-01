@@ -88,4 +88,8 @@ export class GeneralManager implements Manager {
         this.initMemory(room);
     }
 
+    public updateUI() {
+        // DO NOTHING
+    }
+
 }

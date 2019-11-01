@@ -24,6 +24,7 @@ interface Tiers {
 interface Manager {
   doBefore(): void;
   manageRoom(room: Room): void;
+  updateUI(room: Room): void;
 }
 
 interface Role {
