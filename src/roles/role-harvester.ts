@@ -14,9 +14,12 @@ const work = (creep: Creep, pathStyle: PolyStyle) => {
                 (s.structureType === STRUCTURE_TOWER && s.energy < s.energyCapacity)
         }
     });
-    const containers = creep.room.find(FIND_STRUCTURES, {
+    const storageStructures = creep.room.find(FIND_STRUCTURES, {
         filter: (s: AnyStructure) => {
-            return (s.structureType === STRUCTURE_CONTAINER && s.store.getFreeCapacity() > 0);
+            return (
+                (s.structureType === STRUCTURE_CONTAINER || s.structureType === STRUCTURE_STORAGE) &&
+                (s.storeCapacity - s.store.energy) > 0
+            );
         }
     });
     if (primaryTargets.length > 0) {
@@ -30,21 +33,25 @@ const work = (creep: Creep, pathStyle: PolyStyle) => {
                 visualizePathStyle: pathStyle
             });
         }
-    } else if (containers.length > 0) {
+    } else if (storageStructures.length > 0) {
         // console.log(`No primary targets found. Found ${containers.length} containers instead`)
         creep.say(Icon.ACTION_DROP + Icon.TARGET_CONTAINER);
         creep.memory.currentTarget = {
-            id: containers[0].id,
-            pos: containers[0].pos
+            id: storageStructures[0].id,
+            pos: storageStructures[0].pos
         };
-        if (!creep.pos.isEqualTo(containers[0])) {
-            creep.moveTo(containers[0]);
+        if (!creep.pos.isEqualTo(storageStructures[0])) {
+            creep.moveTo(storageStructures[0]);
         } else {
-            console.log(`Feeding container at ${containers[0].pos.x + ',' + containers[0].pos.y}`)
-            const missing = (containers[0] as { store: Store }).store.getFreeCapacity();
-            creep.drop(RESOURCE_ENERGY, Math.min(missing, creep.store.getUsedCapacity()));
+            console.log(`Feeding container at ${storageStructures[0].pos.x + ',' + storageStructures[0].pos.y}`)
+            if (storageStructures[0] instanceof StructureContainer || storageStructures[0] instanceof StructureStorage) {
+                // @ts-ignore
+                const missing = storageStructures[0].storeCapacity - storageStructures[0].store.energy;
+                creep.drop(RESOURCE_ENERGY, Math.min(missing, creep.carry.energy));
+            }
         }
     } else {
+        creep.say(Icon.ACTION_REST);
         // console.log(`No targets of any type found. Resting at flag`)
         creep.memory.currentTarget = undefined;
         const restFlag = Game.flags['H'];
@@ -65,7 +72,7 @@ export const RoleHarvester: Role = {
         }
 
         if (working) {
-            if (creep.store.getUsedCapacity() > 0) {
+            if (creep.carry.energy > 0) {
                 work(creep, harvesterPathStyle);
             } else {
                 working = false;

@@ -1,15 +1,15 @@
-interface Store {
-  energy: number;
-  getCapacity(resource?: ResourceConstant): number;
-  getFreeCapacity(resource?: ResourceConstant): number;
-  getUsedCapacity(resource?: ResourceConstant): number;
-}
+// interface StoreDefinition {
+//   energy: number;
+//   getCapacity(resource?: ResourceConstant): number;
+//   getFreeCapacity(resource?: ResourceConstant): number;
+//   getUsedCapacity(resource?: ResourceConstant): number;
+// }
 
-interface Creep { store: Store }
-interface StructureContainer { store: Store }
-interface StructureSpawn { store: Store }
-interface StructureExtension { store: Store }
-interface StructureTower { store: Store }
+// interface Creep { store: Store }
+// interface StructureContainer { store: Store }
+// interface StructureSpawn { store: Store }
+// interface StructureExtension { store: Store }
+// interface StructureTower { store: Store }
 
 
 
@@ -78,8 +78,10 @@ interface Memory {
 // `global` extension samples
 declare namespace NodeJS {
   interface Global {
+    Role: string[]; // RoleName
     bodyCost(body: BodyPartConstant[]): number;
     setLimit(roomName: string, roleName: string, limit: number): void;
+    setTier(roomName: string, roleName: string, tier: number): void;
     spawnWorker(roomName: string, spawnName: string, roleName: string, tier: number): void;
   }
 }

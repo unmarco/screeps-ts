@@ -23,6 +23,7 @@ const work = (creep: Creep, pathStyle: PolyStyle) => {
             });
         }
     } else {
+        creep.say(Icon.ACTION_REST);
         creep.memory.currentTarget = undefined;
         const restFlag = Game.flags['B'];
         creep.moveTo(restFlag);
@@ -36,9 +37,7 @@ export const RoleBuilder: Role = {
     run: (creep: Creep) => {
         let working = creep.memory.working;
         if (creep.carry.energy < creep.carryCapacity && !working) {
-            if (creep.carry.energy < creep.carryCapacity) {
-                harvestEnergy(creep, builderPathStyle);
-            }
+            harvestEnergy(creep, builderPathStyle);
         } else {
             working = true;
         }

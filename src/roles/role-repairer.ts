@@ -15,9 +15,12 @@ const work = (creep: Creep, pathStyle: PolyStyle) => {
             const isWall = s.structureType === STRUCTURE_WALL;
             const isRampart = s.structureType === STRUCTURE_RAMPART;
             const isWallOrRampart = isWall || isRampart;
-            return (isWall && s.hits < wallHitpoints) ||
+            const targetingCreeps = creep.room.find(FIND_MY_CREEPS, {
+                filter: (c: Creep) => c.memory.currentTarget && c.pos.isEqualTo(c.memory.currentTarget.pos)
+            });
+            return targetingCreeps.length === 0 && ((isWall && s.hits < wallHitpoints) ||
                 (isRampart && s.hits < rampartHitpoints) ||
-                (!isWallOrRampart && s.hits < s.hitsMax);
+                (!isWallOrRampart && s.hits < s.hitsMax));
         }
     });
 
@@ -34,6 +37,7 @@ const work = (creep: Creep, pathStyle: PolyStyle) => {
             });
         }
     } else {
+        creep.say(Icon.ACTION_REST);
         creep.memory.currentTarget = undefined;
         const restFlag = Game.flags['R'];
         creep.moveTo(restFlag);

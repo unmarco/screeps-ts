@@ -28,9 +28,7 @@ export const RoleUpgrader: Role = {
         let working = creep.memory.working;
         if (!_.isUndefined(creep.room.controller)) {
             if (creep.carry.energy < creep.carryCapacity && !working) {
-                if (creep.carry.energy < creep.carryCapacity) {
-                    harvestEnergy(creep, upgraderPathStyle);
-                }
+                harvestEnergy(creep, upgraderPathStyle);
             } else {
                 working = true;
             }

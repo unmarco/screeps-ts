@@ -13,8 +13,8 @@ export const isInRangeTo = _.curry(<T extends RoomPosition>(range: number, a: T,
 export const harvestEnergy = (creep: Creep, pathStyle: PolyStyle, useContainers: boolean = true) => {
     const containers = creep.room.find(FIND_STRUCTURES, {
         filter: (c: AnyStructure) => {
-            return c.structureType === STRUCTURE_CONTAINER &&
-                ((c as StructureContainer).store.getUsedCapacity() > 0);
+            return (c.structureType === STRUCTURE_CONTAINER || c.structureType === STRUCTURE_STORAGE) &&
+                ((c as StructureContainer).store.energy > 0);
         }
     });
 
@@ -92,7 +92,7 @@ export const harvestEnergy = (creep: Creep, pathStyle: PolyStyle, useContainers:
     }
 }
 
-export const enum RoleName {
+export enum RoleName {
     BUILDER = 'builder',
     HARVESTER = 'harvester',
     REPAIRER = 'repairer',

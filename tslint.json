@@ -15,6 +15,7 @@
     "ordered-imports": [false],
     "only-arrow-functions": [false],
     "no-var-requires": [false],
+    "max-classes-per-file": [false, 5],
     "variable-name": [
       true,
       "ban-keywords",

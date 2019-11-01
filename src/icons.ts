@@ -5,6 +5,7 @@ const enum Icon {
     ACTION_PICKUP   = '⬆',
     ACTION_RECHARGE = '⛽',
     ACTION_REPAIR   = '🔧',
+    ACTION_REST     = '💤',
     ACTION_TRANSFER = '🔽',
     ACTION_UPGRADE  = '🔼',
 

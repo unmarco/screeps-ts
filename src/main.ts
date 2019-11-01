@@ -13,11 +13,19 @@ import { GeneralManager } from "managers/general-manager";
 
 // console.log('------------------------ DEPLOY');
 
-global.setLimit = (roomName: string, roleName: RoleName, limit: number) => {
-  const room = Game.rooms[roomName];
+global.setLimit = (roomParam: string | Room, roleName: RoleName, limit: number) => {
+  const room = typeof roomParam === 'string' ? Game.rooms[roomParam] : roomParam;
   if (room !== undefined && room.memory.limits !== undefined) {
     room.memory.limits[roleName] = limit;
     console.log(room.memory.limits);
+  }
+};
+
+global.setTier = (roomParam: string | Room, roleName: RoleName, tier: number) => {
+  const room = typeof roomParam === 'string' ? Game.rooms[roomParam] : roomParam;
+  if (room !== undefined && room.memory.tiers !== undefined) {
+    room.memory.tiers[roleName] = tier;
+    console.log(room.memory.tiers);
   }
 };
 
@@ -62,6 +70,8 @@ const managers: Manager[] = [
 ];
 
 export const loop = ErrorMapper.wrapLoop(() => {
+
+
 
   managers.forEach((manager: Manager) => {
 
