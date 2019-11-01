@@ -63,10 +63,10 @@ const managedRoles = [
 ];
 
 const managers: Manager[] = [
+  new GeneralManager(),
   new SpawnManager(managedRoles),
   new WorkManager(managedRoles),
   new DefenseManager(),
-  new GeneralManager(),
 ];
 
 export const loop = ErrorMapper.wrapLoop(() => {
