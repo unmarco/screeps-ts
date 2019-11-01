@@ -11,47 +11,37 @@ export const isInRangeTo = _.curry(<T extends RoomPosition>(range: number, a: T,
 // ()
 
 export const harvestEnergy = (creep: Creep, pathStyle: PolyStyle, useContainers: boolean = true) => {
-    const containers = creep.room.find(FIND_STRUCTURES, {
-        filter: (c: AnyStructure) => {
-            return (c.structureType === STRUCTURE_CONTAINER || c.structureType === STRUCTURE_STORAGE) &&
-                ((c as StructureContainer).store.energy > 0);
-        }
-    });
-
+    const containers = _.filter(creep.room.memory.storages, (s: ResourceStorageStructure) => s.store.used > 0);
+    const droppedEnergy = creep.room.memory.droplets;
     const sources = creep.room.find(FIND_SOURCES_ACTIVE);
-
-    const droppedEnergy = creep.room.find(FIND_DROPPED_RESOURCES, {
-        filter: (r: Resource) => r.resourceType === RESOURCE_ENERGY
-    });
 
     const byDistance = sortByDistance(creep.pos);
 
     if (useContainers && containers.length > 0) {
         containers.sort(byDistance);
-        creep.memory.currentTarget = {
-            id: containers[0].id,
-            pos: containers[0].pos
-        };
-        creep.say(Icon.ACTION_RECHARGE + Icon.TARGET_CONTAINER);
-        if (creep.withdraw(containers[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-            creep.moveTo(containers[0]);
+        const target = Game.getObjectById(containers[0].id) as (StructureStorage | StructureContainer);
+        if (target) {
+            creep.memory.currentTarget = {
+                id: target.id,
+                pos: target.pos
+            };
+            creep.say(Icon.ACTION_RECHARGE + Icon.TARGET_CONTAINER);
+            if (creep.withdraw(target, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+                creep.moveTo(target);
+            }
         }
     } else if (droppedEnergy && droppedEnergy.length > 0) {
-        creep.say(Icon.ACTION_RECHARGE + Icon.ACTION_PICKUP);
+        const target = Game.getObjectById(droppedEnergy[0].id) as Resource;
+        if (target) {
+            creep.say(Icon.ACTION_RECHARGE + Icon.ACTION_PICKUP);
 
-        if (!creep.pos.isNearTo(droppedEnergy[0].pos)) {
-            creep.moveTo(droppedEnergy[0].pos);
-        } else {
-            creep.pickup(droppedEnergy[0]);
+            if (!creep.pos.isNearTo(target.pos)) {
+                creep.moveTo(target.pos);
+            } else {
+                creep.pickup(target);
+            }
         }
     } else if (sources && sources.length > 0) {
-        // const withRange = isInRangeTo(1);
-        // const filter = withRange(creep.pos);
-        // sources.forEach((s: Source) => {
-        //     const creepsAtSource = creep.room.find(FIND_CREEPS, { filter });
-        //     creep.room.visual.text(String(creepsAtSource.length), s.pos.x + 1, s.pos.y + 0.25);
-        // })
-
         sources.sort((a: Source, b: Source) => {
 
             const energyA = a.energy;

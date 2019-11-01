@@ -80,11 +80,24 @@ interface ConstructionSiteData extends StructureData {
   ratio: number;
 }
 
+interface ReparirTargetData extends StructureData {
+  hits: number;
+  hitsMax: number;
+  ratio: number;
+}
+
+interface DropletData extends StructureData {
+  resource: ResourceConstant;
+  amount: number;
+}
+
 interface RoomMemory {
   sources: SourceData[];
   sinks: SinkData[];
   storages: ResourceStorageStructure[];
   sites: ConstructionSiteData[];
+  repairTargets: ReparirTargetData[];
+  droplets: DropletData[];
 
   limits: {
     [roleName: string]: number;

@@ -33,41 +33,35 @@ export class RepairerRole extends BaseRole {
         creep.memory.working = working;
     }
 
+    public rest(creep: Creep) {
+        creep.say(Icon.ACTION_REST);
+        creep.memory.currentTarget = undefined;
+        const restFlag = Game.flags['R'];
+        creep.moveTo(restFlag);
+    }
+
     public work(creep: Creep, pathStyle: PolyStyle) {
         creep.say(Icon.ACTION_REPAIR);
-        const wallHitpoints = creep.room.memory.hits.walls;
-        const rampartHitpoints = creep.room.memory.hits.ramparts;
-        const structures = creep.room.find(FIND_STRUCTURES, {
-            filter: (s: AnyStructure) => {
-                const isWall = s.structureType === STRUCTURE_WALL;
-                const isRampart = s.structureType === STRUCTURE_RAMPART;
-                const isWallOrRampart = isWall || isRampart;
-                const targetingCreeps = creep.room.find(FIND_MY_CREEPS, {
-                    filter: (c: Creep) => c.memory.currentTarget && c.pos.isEqualTo(c.memory.currentTarget.pos)
-                });
-                return targetingCreeps.length === 0 && ((isWall && s.hits < wallHitpoints) ||
-                    (isRampart && s.hits < rampartHitpoints) ||
-                    (!isWallOrRampart && s.hits < s.hitsMax));
-            }
-        });
-
-        if (structures.length > 0) {
-            creep.say(`${Icon.ACTION_MOVE} ${structures[0].pos.x + ',' + structures[0].pos.y}`);
-            creep.room.visual.text(Icon.TARGET_REPAIRER, structures[0].pos.x, structures[0].pos.y);
-            creep.memory.currentTarget = {
-                id: structures[0].id,
-                pos: structures[0].pos
-            };
-            if (creep.repair(structures[0]) === ERR_NOT_IN_RANGE) {
-                creep.moveTo(structures[0], {
-                    visualizePathStyle: pathStyle
-                });
+        const repairTargets = creep.room.memory.repairTargets;
+        if (repairTargets.length > 0) {
+            const target = Game.getObjectById(repairTargets[0].id) as AnyStructure;
+            if (target) {
+                creep.say(`${Icon.ACTION_MOVE} ${target.pos.x + ',' + target.pos.y}`);
+                creep.room.visual.text(Icon.TARGET_REPAIRER, target.pos.x, target.pos.y);
+                creep.memory.currentTarget = {
+                    id: target.id,
+                    pos: target.pos
+                };
+                if (creep.repair(target) === ERR_NOT_IN_RANGE) {
+                    creep.moveTo(target, {
+                        visualizePathStyle: pathStyle
+                    });
+                }
+            } else {
+                this.rest(creep);
             }
         } else {
-            creep.say(Icon.ACTION_REST);
-            creep.memory.currentTarget = undefined;
-            const restFlag = Game.flags['R'];
-            creep.moveTo(restFlag);
+            this.rest(creep);
         }
     }
 }

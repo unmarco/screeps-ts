@@ -3,6 +3,8 @@ const defaultRoomMemory: RoomMemory = {
     sinks: [],
     storages: [],
     sites: [],
+    repairTargets: [],
+    droplets: [],
     limits: {
         harvesters: 2,
         upgraders: 2,
@@ -24,7 +26,7 @@ const defaultRoomMemory: RoomMemory = {
 export class GeneralManager implements Manager {
 
     public doBefore(): void {
-        // throw new Error("Method not implemented.");
+        // DO NOTHING
     }
 
     private initStoragesMemory(room: Room) {
@@ -48,6 +50,20 @@ export class GeneralManager implements Manager {
             return data;
         });
         room.memory.storages = storages;
+    }
+
+    private initDropletsMemory(room: Room) {
+        const droplets = room.find(FIND_DROPPED_RESOURCES).map((d: Resource) => {
+            const droplet: DropletData = {
+                id: d.id,
+                pos: d.pos,
+                resource: d.resourceType,
+                amount: d.amount
+            }
+            return droplet;
+        });
+        droplets.sort((a: DropletData, b: DropletData) => a.amount - b.amount);
+        room.memory.droplets = droplets;
     }
 
     private initSinksMemory(room: Room) {
@@ -104,6 +120,32 @@ export class GeneralManager implements Manager {
         room.memory.sites = sites;
     }
 
+    private initRepairTargetsMemory(room: Room) {
+        const wallHitpoints = room.memory.hits.walls;
+        const rampartHitpoints = room.memory.hits.ramparts;
+        const repairTargets = room.find(FIND_STRUCTURES, {
+            filter: (s: AnyStructure) => {
+                const isWall = s.structureType === STRUCTURE_WALL;
+                const isRampart = s.structureType === STRUCTURE_RAMPART;
+                const isWallOrRampart = isWall || isRampart;
+                return (isWall && s.hits < wallHitpoints) ||
+                    (isRampart && s.hits < rampartHitpoints) ||
+                    (!isWallOrRampart && s.hits < s.hitsMax);
+            }
+        }).map((s: AnyStructure) => {
+            const repairTarget: ReparirTargetData  = {
+                id: s.id,
+                pos: s.pos,
+                hits: s.hits,
+                hitsMax: s.hitsMax,
+                ratio: s.hits / s.hitsMax
+            }
+            return repairTarget;
+        });
+        repairTargets.sort((a: ReparirTargetData, b: ReparirTargetData) => a.ratio - b.ratio);
+        room.memory.repairTargets = repairTargets;
+    }
+
     private initLimitsAndTiers(room: Room) {
         if (room.memory.limits === undefined) {
             console.log(`GeneralManager: Setting default limits for room ${room.name}`)
@@ -123,8 +165,10 @@ export class GeneralManager implements Manager {
         this.initLimitsAndTiers(room);
         this.initSourcesMemory(room);
         this.initStoragesMemory(room);
+        this.initDropletsMemory(room);
         this.initSinksMemory(room);
         this.initConstructionSitesMemory(room);
+        this.initRepairTargetsMemory(room);
     }
 
     public manageRoom(room: Room): void {
