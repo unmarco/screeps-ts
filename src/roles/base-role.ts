@@ -7,6 +7,10 @@ export abstract class BaseRole implements RoleDefinition {
         this.name = name;
     }
 
+    public checkSpawnPrecondition(room: Room) {
+        return true; // Default implementation
+    }
+
     public config(data?: any) { /* default implementation does nothing */ }
 
     public abstract run(creep: Creep): void;

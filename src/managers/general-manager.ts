@@ -11,11 +11,11 @@ const defaultRoomMemory: RoomMemory = {
     creeps: {},
 
     limits: {
-        miner: 2,
-        hauler: 2,
+        miner: 1,
+        hauler: 1,
         upgrader: 1,
         builder: 1,
-        repairer: 0,
+        repairer: 1,
 
         // deprecated
         harvester: 0,

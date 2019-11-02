@@ -113,6 +113,11 @@ Creep.prototype.getEnergy = function (useContainers: boolean = true, useSources:
       }
     }
   } else {
-    console.log('NO SOURCES OR CONTAINERS');
+    if (useSources) {
+      console.log('NO SOURCES!');
+    }
+    if (useContainers) {
+      console.log('NO CONTAINERS!');
+    }
   }
 };

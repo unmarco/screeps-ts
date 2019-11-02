@@ -46,17 +46,17 @@ export const BodyTier: TiersByRole = {
     },
 
     miner: {
-        1: [WORK, MOVE],
-        2: [WORK, WORK, MOVE, MOVE],
-        3: [WORK, WORK, WORK, MOVE, MOVE, MOVE],
-        4: [WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE]
+        1: [WORK, WORK, MOVE],
+        2: [WORK, WORK, WORK, MOVE],
+        3: [WORK, WORK, WORK, WORK, MOVE, MOVE],
+        4: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE]
     },
 
     hauler: {
-        1: [CARRY, MOVE],
-        2: [CARRY, CARRY, MOVE, MOVE],
-        3: [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
-        4: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
+        1: [CARRY, CARRY, MOVE],
+        2: [CARRY, CARRY, CARRY, MOVE, MOVE],
+        3: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
+        4: [CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
     },
 };
 
@@ -121,17 +121,21 @@ export class SpawnManager implements Manager {
 
             const spawner = this.attemptSpawnWorker(spawns[0]);
             for (const role of this.managedRoles) {
-                const foundCreeps = getByRole(role.name);
-                // console.log(`Maybe spawn a ${role.name}`);
-                if (foundCreeps.length < limits[role.name]) {
-                    const tier: number = tiers[role.name];
-                    const result = spawner(tier, role.name);
-                    if (result) {
-                        // console.log(`Yep, a ${role.name}`);
-                        break;
+                if (role.checkSpawnPrecondition(room)) {
+                    const foundCreeps = getByRole(role.name);
+                    // console.log(`Maybe spawn a ${role.name}`);
+                    if (foundCreeps.length < limits[role.name]) {
+                        const tier: number = tiers[role.name];
+                        const result = spawner(tier, role.name);
+                        if (result) {
+                            // console.log(`Yep, a ${role.name}`);
+                            break;
+                        }
+                    } else {
+                        // console.log(`Nope, not a ${role.name}`);
                     }
                 } else {
-                    // console.log(`Nope, not a ${role.name}`);
+                    // console.log(`Spawn precondition not met for role: ${role.name}`);
                 }
             }
         } else {

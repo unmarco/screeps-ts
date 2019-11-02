@@ -11,6 +11,10 @@ export class BuilderRole extends BaseRole {
         super(RoleName.BUILDER);
     }
 
+    public checkSpawnPrecondition(room: Room) {
+        return room.memory.sites.length > 0;
+    }
+
     public run(creep: Creep) {
         let working = creep.memory.working;
         if (creep.carry.energy < creep.carryCapacity && !working) {

@@ -21,6 +21,7 @@ interface Manager {
 
 interface RoleDefinition {
   name: string;
+  checkSpawnPrecondition: (room: Room) => boolean;
   config: (data?: any) => void;
   run: (creep: Creep) => void;
 }

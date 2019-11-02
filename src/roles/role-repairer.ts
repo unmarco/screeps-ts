@@ -12,6 +12,10 @@ export class RepairerRole extends BaseRole {
         super(RoleName.REPAIRER);
     }
 
+    public checkSpawnPrecondition(room: Room) {
+        return room.memory.repairTargets.length > 0;
+    }
+
     public run(creep: Creep) {
         let working = creep.memory.working;
 
