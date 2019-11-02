@@ -1,4 +1,4 @@
-import { harvestEnergy, RoleName } from "./role-util";
+import { RoleName } from "./role-util";
 import Icon from "icons";
 import { BaseRole } from "./base-role";
 
@@ -18,7 +18,7 @@ export class BuilderRole extends BaseRole {
     public run(creep: Creep) {
         let working = creep.memory.working;
         if (creep.carry.energy < creep.carryCapacity && !working) {
-            harvestEnergy(creep, builderPathStyle);
+            creep.getEnergy();
         } else {
             working = true;
         }

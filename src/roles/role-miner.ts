@@ -1,4 +1,4 @@
-import { harvestEnergy, RoleName } from "./role-util";
+import { RoleName } from "./role-util";
 import Icon from "icons";
 import { BaseRole } from "./base-role";
 

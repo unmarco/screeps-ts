@@ -1,5 +1,5 @@
 import { BodyTier } from "managers/spawn-manager";
-import { RoleName, harvestEnergy } from "roles/role-util";
+import { RoleName } from "roles/role-util";
 import {EnumValues} from 'enum-values';
 import Icon from "icons";
 
