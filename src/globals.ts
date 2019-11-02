@@ -56,11 +56,16 @@ global.spawnWorker = (roomName: string, spawnName: string, roleName: string, tie
         role: roleName,
         tier,
         room: spawn.room.name,
-        working: false
+        working: false,
+        recycling: false
       }
     });
   }
 }
+
+global.print = function(obj: any) {
+  console.log(JSON.stringify(obj, null, 2));
+};
 
 // proto/creep.ts
 Creep.prototype.getEnergy = function (useContainers: boolean = true, useSources: boolean = true, useDroplets: boolean = true) {
@@ -81,6 +86,9 @@ Creep.prototype.getEnergy = function (useContainers: boolean = true, useSources:
       }
     }
   } else if (useDroplets && droppedEnergy.length > 0) {
+    droppedEnergy.sort((a: DroppedResourceData, b: DroppedResourceData) => {
+      return this.pos.getRangeTo(a.pos) - this.pos.getRangeTo(b.pos);
+    });
     const target = Game.getObjectById(droppedEnergy[0].id) as Resource;
     if (target) {
       this.say(Icon.ACTION_RECHARGE + Icon.ACTION_PICKUP);
@@ -138,3 +146,19 @@ Creep.prototype.getEnergy = function (useContainers: boolean = true, useSources:
     }
   }
 };
+
+Creep.prototype.recycle = function() {
+  const spawns = _.filter(this.room.memory.structures, s => s.type === STRUCTURE_SPAWN);
+  if (spawns.length > 0) {
+    spawns.sort((a: StructureData, b: StructureData) => this.pos.getRangeTo(a) - this.pos.getRangeTo(b));
+    const spawn = Game.getObjectById(spawns[0].id) as StructureSpawn;
+    if (spawn !== null) {
+      if (this.pos.isNearTo(spawn.pos)) {
+        spawn.recycleCreep(this);
+      } else {
+        this.moveTo(spawn);
+      }
+    }
+  }
+
+}

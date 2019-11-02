@@ -1,4 +1,5 @@
 import { RoleName } from "roles/role-util";
+import Icon from "icons";
 
 export class WorkManager implements Manager {
 
@@ -38,11 +39,16 @@ export class WorkManager implements Manager {
         });
 
         room.find(FIND_MY_CREEPS).forEach((creep: Creep) => {
-            this.managedRoles.forEach((role: RoleDefinition) => {
-                if (creep.memory.role === role.name) {
-                    role.run(creep);
-                }
-            });
+            if (creep.ticksToLive !== undefined && creep.ticksToLive < 25) {
+                creep.say(Icon.RECYCLE);
+                creep.recycle();
+            } else {
+                this.managedRoles.forEach((role: RoleDefinition) => {
+                    if (creep.memory.role === role.name) {
+                        role.run(creep);
+                    }
+                });
+            }
         });
     }
 

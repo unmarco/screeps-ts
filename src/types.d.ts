@@ -1,5 +1,6 @@
 interface Creep {
   getEnergy: (useContainers?: boolean, useSources?: boolean, useDroplets?: boolean) => void;
+  recycle: () => void;
 }
 
 
@@ -32,6 +33,7 @@ interface CreepMemory {
   tier: number;
   room: string;
   working: boolean;
+  recycling: boolean;
   currentTarget?: {
     id: string;
     pos: RoomPosition;
@@ -168,5 +170,6 @@ declare namespace NodeJS {
     setLimit(roomName: string, roleName: string, limit: number): void;
     setTier(roomName: string, roleName: string, tier: number): void;
     spawnWorker(roomName: string, spawnName: string, roleName: string, tier: number): void;
+    print(obj: any): void;
   }
 }

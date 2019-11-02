@@ -12,6 +12,8 @@ const enum Icon {
     TARGET_CONTAINER = '⬛',
     TARGET_REPAIRER = '🛠',
     TARGET_SOURCE = '🔆',
+
+    RECYCLE = '♻',
 }
 
 export default Icon;

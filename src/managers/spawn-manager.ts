@@ -81,7 +81,8 @@ export class SpawnManager implements Manager {
                     role: roleName,
                     tier,
                     room: spawn.room.name,
-                    working: false
+                    working: false,
+                    recycling: false
                 }
             });
             return true;

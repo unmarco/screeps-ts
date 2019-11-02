@@ -18,7 +18,7 @@ export class BuilderRole extends BaseRole {
     public run(creep: Creep) {
         let working = creep.memory.working;
         if (creep.carry.energy < creep.carryCapacity && !working) {
-            creep.getEnergy();
+            creep.getEnergy(true, true, false);
         } else {
             working = true;
         }
