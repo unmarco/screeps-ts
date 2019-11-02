@@ -21,7 +21,7 @@ interface Manager {
 
 interface RoleDefinition {
   name: string;
-  checkSpawnPrecondition: (room: Room) => boolean;
+  checkSpawnPreconditions: (room: Room) => boolean;
   config: (data?: any) => void;
   run: (creep: Creep) => void;
 }
@@ -123,10 +123,14 @@ interface RoomMemory {
 
   limits: {
     [roleName: string]: number;
-  };
+  }
 
   priorities: {
     [roleName: string]: number;
+  }
+
+  preconditions: {
+    [roleName: string]: boolean;
   }
 
   tiers: {

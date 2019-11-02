@@ -83,6 +83,8 @@ export const harvestEnergy = (creep: Creep, pathStyle: PolyStyle, useContainers:
 }
 
 export enum RoleName {
+    ALL = 'all',
+
     BUILDER = 'builder',
     HARVESTER = 'harvester',
     REPAIRER = 'repairer',

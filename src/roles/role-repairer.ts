@@ -12,7 +12,7 @@ export class RepairerRole extends BaseRole {
         super(RoleName.REPAIRER);
     }
 
-    public checkSpawnPrecondition(room: Room) {
+    public checkSpawnPreconditions(room: Room) {
         return room.memory.repairTargets.length > 0;
     }
 

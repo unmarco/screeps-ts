@@ -121,7 +121,7 @@ export class SpawnManager implements Manager {
 
             const spawner = this.attemptSpawnWorker(spawns[0]);
             for (const role of this.managedRoles) {
-                if (role.checkSpawnPrecondition(room)) {
+                if (room.memory.preconditions[role.name]) {
                     const foundCreeps = getByRole(role.name);
                     // console.log(`Maybe spawn a ${role.name}`);
                     if (foundCreeps.length < limits[role.name]) {

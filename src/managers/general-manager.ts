@@ -16,9 +16,6 @@ const defaultRoomMemory: RoomMemory = {
         upgrader: 1,
         builder: 1,
         repairer: 1,
-
-        // deprecated
-        harvester: 0,
     },
 
     priorities: {
@@ -27,10 +24,9 @@ const defaultRoomMemory: RoomMemory = {
         upgrader: 2,
         builder: 1,
         repairer: 0,
-
-        // deprecated
-        harvester: -1,
     },
+
+    preconditions: {},
 
     tiers: {
         miner: 1,
@@ -38,9 +34,6 @@ const defaultRoomMemory: RoomMemory = {
         upgrader: 1,
         builder: 1,
         repairer: 1,
-
-        // deprecated
-        harvester: 1,
     },
 
     hits: {
@@ -52,6 +45,12 @@ const defaultRoomMemory: RoomMemory = {
 export class GeneralManager implements Manager {
 
     public name = "GeneralManager";
+
+    private managedRoles: RoleDefinition[];
+
+    constructor(roles: RoleDefinition[]) {
+        this.managedRoles = roles;
+    }
 
     public doBefore(): void {
         // DO NOTHING
@@ -192,23 +191,27 @@ export class GeneralManager implements Manager {
         room.memory.repairTargets = repairTargets;
     }
 
-    private initLimitsAndTiers(room: Room) {
+    private initSpawnLogicMemory(room: Room) {
         if (room.memory.limits === undefined) {
             console.log(`GeneralManager: Setting default limits for room ${room.name}`)
             room.memory.limits = defaultRoomMemory.limits;
         }
         if (room.memory.priorities === undefined) {
-            console.log(`GeneralManager: Setting default priorities for room ${room.name}`)
+            console.log(`GeneralManager: Setting default priorities for room ${room.name}`);
             room.memory.priorities = defaultRoomMemory.priorities;
         }
         if (room.memory.tiers === undefined) {
             console.log(`GeneralManager: Setting default tiers for room ${room.name}`)
             room.memory.tiers = defaultRoomMemory.tiers;
         }
-        if (room.memory.hits === undefined) {
-            console.log(`GeneralManager: Setting default hits for room ${room.name}`)
-            room.memory.hits = defaultRoomMemory.hits;
-        }
+
+        // console.log(`GeneralManager: Setting default preconditions for room ${room.name}`)
+        const preconditions: {
+            [roleName: string]: boolean;
+        } = {};
+        this.managedRoles.forEach(r => preconditions[r.name] = r.checkSpawnPreconditions(room));
+        // console.log(JSON.stringify(preconditions));
+        room.memory.preconditions = preconditions;
     }
 
     private initCreepsMemory(room: Room) {
@@ -230,9 +233,16 @@ export class GeneralManager implements Manager {
         // console.log(JSON.stringify(grouped));
     }
 
+    private initDefensesMemory(room: Room) {
+        if (room.memory.hits === undefined) {
+            console.log(`GeneralManager: Setting default hits for room ${room.name}`)
+            room.memory.hits = defaultRoomMemory.hits;
+        }
+    }
+
     public initMemory(room: Room) {
         this.initStructuresMemory(room);
-        this.initLimitsAndTiers(room);
+        this.initDefensesMemory(room);
         this.initSourcesMemory(room);
         this.initStoragesMemory(room);
         this.initDropletsMemory(room);
@@ -241,6 +251,7 @@ export class GeneralManager implements Manager {
         this.initRepairTargetsMemory(room);
 
         this.initCreepsMemory(room);
+        this.initSpawnLogicMemory(room);
     }
 
     public manageRoom(room: Room): void {

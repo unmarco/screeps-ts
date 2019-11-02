@@ -11,7 +11,7 @@ export class BuilderRole extends BaseRole {
         super(RoleName.BUILDER);
     }
 
-    public checkSpawnPrecondition(room: Room) {
+    public checkSpawnPreconditions(room: Room) {
         return room.memory.sites.length > 0;
     }
 

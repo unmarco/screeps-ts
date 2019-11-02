@@ -1,7 +1,6 @@
 import { ErrorMapper } from "utils/ErrorMapper";
 
 import { BuilderRole } from "roles/role-builder";
-import { HarvesterRole } from "roles/role-harvester";
 import { RepairerRole } from "roles/role-repairer";
 import { UpgraderRole } from "roles/role-upgrader";
 
@@ -17,18 +16,16 @@ import { HaulerRole } from "roles/role-hauler";
 console.log('------------------------ DEPLOY');
 
 const managedRoles: RoleDefinition[] = [
-  new HarvesterRole(),
+  new MinerRole(),
+  new HaulerRole(),
   new UpgraderRole(),
   new BuilderRole(),
   new RepairerRole(),
-
-  new MinerRole(),
-  new HaulerRole(),
 ];
 
 
 const managers: Manager[] = [
-  new GeneralManager(),
+  new GeneralManager(managedRoles),
   new SpawnManager(managedRoles),
   new WorkManager(managedRoles),
   new DefenseManager(),

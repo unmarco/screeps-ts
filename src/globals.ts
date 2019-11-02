@@ -1,20 +1,37 @@
 import { BodyTier } from "managers/spawn-manager";
 import { RoleName, harvestEnergy } from "roles/role-util";
+import {EnumValues} from 'enum-values';
 import Icon from "icons";
 
 global.setLimit = (roomParam: string | Room, roleName: RoleName, limit: number) => {
   const room = typeof roomParam === 'string' ? Game.rooms[roomParam] : roomParam;
   if (room !== undefined && room.memory.limits !== undefined) {
-    room.memory.limits[roleName] = limit;
-    console.log(room.memory.limits);
+    if (roleName === RoleName.ALL) {
+      const roleNames = EnumValues.getValues(RoleName);
+      for (const r of roleNames) {
+        if (r !== RoleName.ALL) {
+          room.memory.limits[r] = limit;
+        }
+      }
+    } else {
+      room.memory.limits[roleName] = limit;
+    }
   }
 };
 
 global.setTier = (roomParam: string | Room, roleName: RoleName, tier: number) => {
   const room = typeof roomParam === 'string' ? Game.rooms[roomParam] : roomParam;
   if (room !== undefined && room.memory.tiers !== undefined) {
-    room.memory.tiers[roleName] = tier;
-    console.log(room.memory.tiers);
+    if (roleName === RoleName.ALL) {
+      const roleNames = EnumValues.getValues(RoleName);
+      for (const r of roleNames) {
+        if (r !== RoleName.ALL) {
+          room.memory.tiers[r] = tier;
+        }
+      }
+    } else {
+      room.memory.tiers[roleName] = tier;
+    }
   }
 };
 
