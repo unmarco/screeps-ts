@@ -1,15 +1,6 @@
-// interface StoreDefinition {
-//   energy: number;
-//   getCapacity(resource?: ResourceConstant): number;
-//   getFreeCapacity(resource?: ResourceConstant): number;
-//   getUsedCapacity(resource?: ResourceConstant): number;
-// }
-
-// interface Creep { store: Store }
-// interface StructureContainer { store: Store }
-// interface StructureSpawn { store: Store }
-// interface StructureExtension { store: Store }
-// interface StructureTower { store: Store }
+interface Creep {
+  getEnergy: (useContainers?: boolean, useSources?: boolean, useDroplets?: boolean) => void;
+}
 
 
 
@@ -103,6 +94,17 @@ interface DefenseStructureData extends StructureData {
   ratio: number;
 }
 
+interface CreepData {
+  id: string;
+  pos: RoomPosition;
+  role: string;
+  working: boolean;
+  currentTarget: {
+    id: string;
+    pos: RoomPosition;
+  } | null;
+}
+
 interface RoomMemory {
   structures: StructureData[];
   sources: SourceData[];
@@ -113,6 +115,10 @@ interface RoomMemory {
   droplets: DroppedResourceData[];
 
   defenses: DefenseStructureData[];
+
+  creeps: {
+    [roleName: string]: CreepData[];
+  }
 
   limits: {
     [roleName: string]: number;

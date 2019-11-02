@@ -15,7 +15,7 @@ export class UpgraderRole extends BaseRole {
         let working = creep.memory.working;
         if (!_.isUndefined(creep.room.controller)) {
             if (creep.carry.energy < creep.carryCapacity && !working) {
-                harvestEnergy(creep, upgraderPathStyle);
+                creep.getEnergy();
             } else {
                 working = true;
             }

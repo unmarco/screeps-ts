@@ -43,7 +43,21 @@ export const BodyTier: TiersByRole = {
         2: [CARRY, CARRY, WORK, WORK, MOVE, MOVE],
         3: [CARRY, CARRY, CARRY, WORK, WORK, WORK, MOVE, MOVE, MOVE],
         4: [CARRY, CARRY, CARRY, CARRY, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE]
-    }
+    },
+
+    miner: {
+        1: [WORK, MOVE],
+        2: [WORK, WORK, MOVE, MOVE],
+        3: [WORK, WORK, WORK, MOVE, MOVE, MOVE],
+        4: [WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE]
+    },
+
+    hauler: {
+        1: [CARRY, MOVE],
+        2: [CARRY, CARRY, MOVE, MOVE],
+        3: [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
+        4: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
+    },
 };
 
 export class SpawnManager implements Manager {

@@ -1,8 +1,8 @@
-import { harvestEnergy, RoleName } from "./role-util";
+import { RoleName } from "./role-util";
 import Icon from "icons";
 import { BaseRole } from "./base-role";
 
-const harvesterPathStyle: PolyStyle = {
+const haulerPathStyle: PolyStyle = {
     stroke: '#99DD99',
     strokeWidth: 0.1,
 }
@@ -10,12 +10,12 @@ const harvesterPathStyle: PolyStyle = {
 type PrimaryTargetType = StructureSpawn | StructureExtension | StructureTower;
 type StorageStructureType = StructureStorage | StructureContainer;
 
-export class HarvesterRole extends BaseRole {
+export class HaulerRole extends BaseRole {
     public primarySink: PrimaryTargetType | null = null;
     public secondarySink: StorageStructureType | null = null;
 
     constructor() {
-        super(RoleName.HARVESTER);
+        super(RoleName.HAULER);
     }
 
     public config(data?: any) {
@@ -26,14 +26,14 @@ export class HarvesterRole extends BaseRole {
     public run(creep: Creep) {
         let working = creep.memory.working;
         if (creep.carry.energy < creep.carryCapacity && !working) {
-            creep.getEnergy(false, true);
+            creep.getEnergy(false, false, true);
         } else {
             working = true;
         }
 
         if (working) {
             if (creep.carry.energy > 0) {
-                this.work(creep, harvesterPathStyle);
+                this.work(creep, haulerPathStyle);
             } else {
                 working = false;
             }
@@ -42,7 +42,7 @@ export class HarvesterRole extends BaseRole {
         creep.memory.working = working;
     }
 
-    public work(creep: Creep, pathStyle: PolyStyle) {
+    public work(creep: Creep, pathStyle?: PolyStyle) {
         if (this.primarySink !== null) {
             creep.say(Icon.ACTION_TRANSFER);
             creep.memory.currentTarget = {
@@ -72,6 +72,7 @@ export class HarvesterRole extends BaseRole {
             creep.say(Icon.ACTION_REST);
             // console.log(`No targets of any type found. Resting at flag`)
             creep.memory.currentTarget = undefined;
+            creep.memory.working = false;
             const restFlag = Game.flags['H'];
             if (!creep.pos.isNearTo(restFlag)) {
                 creep.moveTo(restFlag);

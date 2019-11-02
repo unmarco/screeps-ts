@@ -17,7 +17,7 @@ export class RepairerRole extends BaseRole {
 
         if (creep.carry.energy < creep.carryCapacity && !working) {
             if (creep.carry.energy < creep.carryCapacity) {
-                harvestEnergy(creep, repairerPathStyle);
+                creep.getEnergy();
             }
         } else {
             working = true;

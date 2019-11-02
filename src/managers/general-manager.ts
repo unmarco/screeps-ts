@@ -7,24 +7,39 @@ const defaultRoomMemory: RoomMemory = {
     repairTargets: [],
     droplets: [],
     defenses: [],
+
+    creeps: {},
+
     limits: {
-        harvester: 2,
-        upgrader: 2,
-        builder: 1,
-        repairer: 0
+        harvester: 0,
+        upgrader: 0,
+        builder: 0,
+        repairer: 0,
+
+        miner: 1,
+        hauler: 0,
     },
+
     priorities: {
-        harvester: 3,
+        harvester: -1,
         upgrader: 2,
         builder: 1,
-        repairer: 0
+        repairer: 0,
+
+        miner: 4,
+        hauler: 3,
     },
+
     tiers: {
         harvester: 1,
         upgrader: 1,
         builder: 1,
-        repairer: 1
+        repairer: 1,
+
+        miner: 1,
+        hauler: 1,
     },
+
     hits: {
         walls: 100000,
         ramparts: 75000
@@ -193,6 +208,25 @@ export class GeneralManager implements Manager {
         }
     }
 
+    private initCreepsMemory(room: Room) {
+        const creepsInRoom = room.find(FIND_MY_CREEPS).map((c: Creep) => {
+            const creepData: CreepData = {
+                id: c.id,
+                pos: c.pos,
+                working: c.memory.working,
+                role: c.memory.role,
+                currentTarget: c.memory.currentTarget ? {
+                    id: c.memory.currentTarget.id,
+                    pos: c.memory.currentTarget.pos
+                } : null,
+            };
+            return creepData;
+        });
+        const grouped = _.groupBy(creepsInRoom, (cd: CreepData) => cd.role);
+        room.memory.creeps = grouped;
+        // console.log(JSON.stringify(grouped));
+    }
+
     public initMemory(room: Room) {
         this.initStructuresMemory(room);
         this.initLimitsAndTiers(room);
@@ -202,6 +236,8 @@ export class GeneralManager implements Manager {
         this.initSinksMemory(room);
         this.initConstructionSitesMemory(room);
         this.initRepairTargetsMemory(room);
+
+        this.initCreepsMemory(room);
     }
 
     public manageRoom(room: Room): void {

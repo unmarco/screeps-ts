@@ -86,7 +86,10 @@ export enum RoleName {
     BUILDER = 'builder',
     HARVESTER = 'harvester',
     REPAIRER = 'repairer',
-    UPGRADER = 'upgrader'
+    UPGRADER = 'upgrader',
+
+    HAULER = 'hauler',
+    MINER = 'miner'
 };
 
 export const getByRole = (role: string): Creep[] => _.filter(Game.creeps,

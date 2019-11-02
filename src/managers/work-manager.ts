@@ -21,7 +21,8 @@ export class WorkManager implements Manager {
         }
         this.managedRoles.forEach((role: RoleDefinition) => {
             switch (role.name) {
-                case RoleName.HARVESTER:
+                // case RoleName.HARVESTER:
+                case RoleName.HAULER:
                     const primarySinks = _.filter(room.memory.sinks!, (s: SinkData) => s.store.free > 0).map((s: SinkData) => {
                         return Game.getObjectById(s.id) as AnyStructure;
                     });

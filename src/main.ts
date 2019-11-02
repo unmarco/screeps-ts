@@ -11,6 +11,8 @@ import { DefenseManager } from "managers/defense-manager";
 import { GeneralManager } from "managers/general-manager";
 
 import "globals";
+import { MinerRole } from "roles/role-miner";
+import { HaulerRole } from "roles/role-hauler";
 
 console.log('------------------------ DEPLOY');
 
@@ -18,7 +20,10 @@ const managedRoles: RoleDefinition[] = [
   new HarvesterRole(),
   new UpgraderRole(),
   new BuilderRole(),
-  new RepairerRole()
+  new RepairerRole(),
+
+  new MinerRole(),
+  new HaulerRole(),
 ];
 
 
