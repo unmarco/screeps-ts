@@ -63,7 +63,7 @@ global.spawnWorker = (roomName: string, spawnName: string, roleName: string, tie
 }
 
 // proto/creep.ts
-Creep.prototype.getEnergy = function (useContainers: boolean = true, useSources: boolean = true, useDroplets: boolean = false) {
+Creep.prototype.getEnergy = function (useContainers: boolean = true, useSources: boolean = true, useDroplets: boolean = true) {
   const containers = _.filter(this.room.memory.storages, (s: ResourceStorageStructure) => s.store.used > 0);
   const droppedEnergy = this.room.memory.droplets;
   const sources = this.room.find(FIND_SOURCES_ACTIVE);

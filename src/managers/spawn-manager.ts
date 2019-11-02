@@ -46,10 +46,10 @@ export const BodyTier: TiersByRole = {
     },
 
     miner: {
-        1: [WORK, WORK, MOVE],
-        2: [WORK, WORK, WORK, MOVE],
-        3: [WORK, WORK, WORK, WORK, MOVE, MOVE],
-        4: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE]
+        1: [WORK, MOVE],
+        2: [WORK, WORK, MOVE],
+        3: [WORK, WORK, WORK, MOVE, MOVE],
+        4: [WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE]
     },
 
     hauler: {
@@ -120,9 +120,11 @@ export class SpawnManager implements Manager {
             const tiers = room.memory.tiers;
 
             const spawner = this.attemptSpawnWorker(spawns[0]);
-            for (const role of this.managedRoles) {
+            // tslint:disable-next-line: prefer-for-of
+            for (let i = 0; i < this.managedRoles.length; i++) {
+                const role = this.managedRoles[i];
+                const foundCreeps = getByRole(role.name);
                 if (room.memory.preconditions[role.name]) {
-                    const foundCreeps = getByRole(role.name);
                     // console.log(`Maybe spawn a ${role.name}`);
                     if (foundCreeps.length < limits[role.name]) {
                         const tier: number = tiers[role.name];
@@ -132,7 +134,7 @@ export class SpawnManager implements Manager {
                             break;
                         }
                     } else {
-                        // console.log(`Nope, not a ${role.name}`);
+                        // console.log(`Nope, not a ${role.name} (found: ${foundCreeps.length}, max: ${limits[role.name]})`);
                     }
                 } else {
                     // console.log(`Spawn precondition not met for role: ${role.name}`);
@@ -153,11 +155,13 @@ export class SpawnManager implements Manager {
 
         let startY = 18;
 
-        for (const roleName in priorities) {
-            const num = getByRole(roleName).length;
-            const tier = room.memory.tiers[roleName];
-            const max = room.memory.limits[roleName];
-            v.text(`${roleName}s: T${tier} ${num}/${max}`, 12, startY++, { align: 'right' });
+        // tslint:disable-next-line: prefer-for-of
+        for (let i = 0; i < this.managedRoles.length; i++) {
+            const role = this.managedRoles[i];
+            const num = getByRole(role.name).length;
+            const tier = room.memory.tiers[role.name];
+            const max = room.memory.limits[role.name];
+            v.text(`${role.name}s: T${tier} ${num}/${max}`, 12, startY++, { align: 'right' });
         }
 
         v.text(`⚡: ${room.energyAvailable}/${room.energyCapacityAvailable}`, 12, startY, { align: 'right' });

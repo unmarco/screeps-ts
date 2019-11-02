@@ -13,14 +13,14 @@ const defaultRoomMemory: RoomMemory = {
     limits: {
         miner: 1,
         hauler: 1,
-        upgrader: 1,
+        upgrader: 2,
         builder: 1,
         repairer: 1,
     },
 
     priorities: {
-        miner: 4,
-        hauler: 3,
+        hauler: 4,
+        miner: 3,
         upgrader: 2,
         builder: 1,
         repairer: 0,
