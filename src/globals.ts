@@ -68,8 +68,8 @@ global.print = function(obj: any) {
 };
 
 // proto/creep.ts
-Creep.prototype.getEnergy = function (useContainers: boolean = true, useSources: boolean = true, useDroplets: boolean = true) {
-  const containers = _.filter(this.room.memory.storages, (s: ResourceStorageStructure) => s.store.used > 0);
+Creep.prototype.getEnergy = function (useContainers: boolean = true, useSources: boolean = true, useDroplets: boolean = true, pathStyle?: PolyStyle) {
+  const containers = _.filter(this.room.memory.storages, (s: ResourceStorageStructure) => s.resource === RESOURCE_ENERGY && s.store.used > 0);
   const droppedEnergy = this.room.memory.droplets;
   const sources = this.room.find(FIND_SOURCES_ACTIVE);
 
@@ -94,7 +94,9 @@ Creep.prototype.getEnergy = function (useContainers: boolean = true, useSources:
       this.say(Icon.ACTION_RECHARGE + Icon.ACTION_PICKUP);
 
       if (!this.pos.isNearTo(target.pos)) {
-        this.moveTo(target.pos);
+        this.moveTo(target.pos, {
+          visualizePathStyle: pathStyle
+        });
       } else {
         this.pickup(target);
       }
@@ -131,9 +133,7 @@ Creep.prototype.getEnergy = function (useContainers: boolean = true, useSources:
       this.say(Icon.ACTION_RECHARGE + Icon.TARGET_SOURCE);
       if (this.harvest(sources[0]) === ERR_NOT_IN_RANGE) {
         this.moveTo(sources[0], {
-          visualizePathStyle: {
-            stroke: '#0000FF'
-          }
+          visualizePathStyle: pathStyle
         });
       }
     }

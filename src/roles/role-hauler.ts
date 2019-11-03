@@ -4,15 +4,13 @@ import { BaseRole } from "./base-role";
 
 const haulerPathStyle: PolyStyle = {
     stroke: '#99DD99',
+    opacity: 0.9,
     strokeWidth: 0.1,
 }
 
-type PrimaryTargetType = StructureSpawn | StructureExtension | StructureTower;
-type StorageStructureType = StructureStorage | StructureContainer;
-
 export class HaulerRole extends BaseRole {
-    public primarySink: PrimaryTargetType | null = null;
-    public secondarySink: StorageStructureType | null = null;
+    public primarySink: PrimarySinkType | null = null;
+    public secondarySink: SecondarySinkType | null = null;
 
     constructor() {
         super(RoleName.HAULER);
@@ -26,7 +24,7 @@ export class HaulerRole extends BaseRole {
     public run(creep: Creep) {
         let working = creep.memory.working;
         if (creep.carry.energy < creep.carryCapacity && !working) {
-            creep.getEnergy(false, false, true);
+            creep.getEnergy(false, false, true, haulerPathStyle);
         } else {
             working = true;
         }
@@ -55,7 +53,6 @@ export class HaulerRole extends BaseRole {
                 });
             }
         } else if (this.secondarySink !== null) {
-            // console.log(`No primary targets found. Found ${containers.length} containers instead`)
             creep.say(Icon.ACTION_DROP + Icon.TARGET_CONTAINER);
             creep.memory.currentTarget = {
                 id: this.secondarySink.id,
@@ -65,8 +62,7 @@ export class HaulerRole extends BaseRole {
                 creep.moveTo(this.secondarySink.pos);
             } else {
                 // console.log(`Feeding container at ${this.storageStructures[0].pos.x + ',' + this.storageStructures[0].pos.y}`)
-                const missing = this.secondarySink.storeCapacity - this.secondarySink.store.energy;
-                creep.drop(RESOURCE_ENERGY, Math.min(missing, creep.carry.energy));
+                creep.drop(RESOURCE_ENERGY);
             }
         } else {
             creep.say(Icon.ACTION_REST);

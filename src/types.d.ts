@@ -1,5 +1,5 @@
 interface Creep {
-  getEnergy: (useContainers?: boolean, useSources?: boolean, useDroplets?: boolean) => void;
+  getEnergy: (useContainers?: boolean, useSources?: boolean, useDroplets?: boolean, pathStyle?: PolyStyle) => void;
   recycle: () => void;
 }
 
@@ -64,6 +64,9 @@ interface ResourceStorageStructure extends StructureData {
   resource: ResourceConstant;
   store: ResourceStore;
 }
+
+type PrimarySinkType = StructureSpawn | StructureExtension | StructureTower;
+type SecondarySinkType = StructureStorage | StructureContainer;
 
 interface SourceData {
   id: string;

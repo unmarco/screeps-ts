@@ -72,23 +72,24 @@ export class GeneralManager implements Manager {
     }
 
     private initStoragesMemory(room: Room) {
-        const storages = _.filter(room.memory.structures, (s: StructureData) => s.type === STRUCTURE_CONTAINER)
-            .map((sd: StructureData) => {
-                const struct = Game.getObjectById(sd.id) as StructureContainer;
-                const storageStructure: ResourceStorageStructure = {
-                    id: struct.id,
-                    pos: struct.pos,
-                    type: struct.structureType,
-                    resource: RESOURCE_ENERGY,
-                    my: sd.my,
-                    store: {
-                        capacity: struct.storeCapacity,
-                        used: struct.store[RESOURCE_ENERGY],
-                        free: struct.storeCapacity - struct.store[RESOURCE_ENERGY]
-                    }
-                };
-                return storageStructure;
-            });
+        const storages = _.filter(room.memory.structures, (s: StructureData) => {
+            return s.type === STRUCTURE_STORAGE || s.type === STRUCTURE_CONTAINER;
+        }).map((sd: StructureData) => {
+            const struct = Game.getObjectById(sd.id) as SecondarySinkType;
+            const storageStructure: ResourceStorageStructure = {
+                id: struct.id,
+                pos: struct.pos,
+                type: struct.structureType,
+                resource: RESOURCE_ENERGY,
+                my: sd.my,
+                store: {
+                    capacity: struct.storeCapacity,
+                    used: struct.store[RESOURCE_ENERGY],
+                    free: struct.storeCapacity - struct.store[RESOURCE_ENERGY]
+                }
+            };
+            return storageStructure;
+        });
         room.memory.storages = storages;
     }
 
