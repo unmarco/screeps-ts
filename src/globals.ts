@@ -89,8 +89,9 @@ Creep.prototype.getEnergy = function (useContainers: boolean = true, useSources:
     droppedEnergy.sort((a: DroppedResourceData, b: DroppedResourceData) => {
       return this.pos.getRangeTo(a.pos) - this.pos.getRangeTo(b.pos);
     });
-    const target = Game.getObjectById(droppedEnergy[0].id) as Resource;
-    if (target) {
+    const chosenDrop = droppedEnergy.shift(); // pick the first one and remove it from the array
+    if (chosenDrop) {
+      const target = Game.getObjectById(chosenDrop.id) as Resource;
       this.say(Icon.ACTION_RECHARGE + Icon.ACTION_PICKUP);
 
       if (!this.pos.isNearTo(target.pos)) {
