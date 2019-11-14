@@ -1,6 +1,6 @@
 import { BodyTier } from "managers/spawn-manager";
 import { RoleName } from "roles/role-util";
-import {EnumValues} from 'enum-values';
+import { EnumValues } from 'enum-values';
 import Icon from "icons";
 
 global.setLimit = (roomParam: string | Room, roleName: RoleName, limit: number) => {
@@ -63,7 +63,7 @@ global.spawnWorker = (roomName: string, spawnName: string, roleName: string, tie
   }
 }
 
-global.print = function(obj: any) {
+global.print = function (obj: any) {
   console.log(JSON.stringify(obj, null, 2));
 };
 
@@ -148,7 +148,7 @@ Creep.prototype.getEnergy = function (useContainers: boolean = true, useSources:
   }
 };
 
-Creep.prototype.recycle = function() {
+Creep.prototype.recycle = function () {
   const spawns = _.filter(this.room.memory.structures, s => s.type === STRUCTURE_SPAWN);
   if (spawns.length > 0) {
     spawns.sort((a: StructureData, b: StructureData) => this.pos.getRangeTo(a) - this.pos.getRangeTo(b));
