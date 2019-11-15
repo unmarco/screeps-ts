@@ -29,6 +29,23 @@ export class WorkManager implements Manager {
             .map((s: SinkData) => {
               return Game.getObjectById(s.id) as AnyStructure;
             });
+
+          primarySinks.sort((a, b) => {
+            const sinkA = (a as PrimarySinkType);
+            const sinkB = (b as PrimarySinkType);
+            const diffA = sinkA.energyCapacity - sinkA.energy;
+            const diffB = sinkB.energyCapacity - sinkB.energy;
+            return diffB - diffA;
+          })
+
+          secondarySinks.sort((a, b) => {
+            const sinkA = (a as SecondarySinkType);
+            const sinkB = (b as SecondarySinkType);
+            const diffA = sinkA.storeCapacity - sinkA.store[RESOURCE_ENERGY];
+            const diffB = sinkB.storeCapacity - sinkB.store[RESOURCE_ENERGY];
+            return diffB - diffA;
+          })
+
           role.config({
             primarySinks, secondarySinks,
             primarySink: primarySinks[0],
